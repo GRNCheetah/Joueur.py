@@ -51,7 +51,7 @@ class Spawn:
                                                        self.game.bodies[b].x, self.game.bodies[b].y,
                                                        self.player.home_base.radius)
 
-                print(xClosestResource, yClosestResource)
+                print("miners:", xClosestResource, yClosestResource)
 
                 self.player.home_base.spawn(xClosestResource, yClosestResource, "miner")
             else:
@@ -66,7 +66,7 @@ class Spawn:
                             xClosestTrans = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
                             yClosestTrans = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
 
-                print(xClosestTrans, xClosestTrans)
+                print("martyrs:", xClosestTrans, xClosestTrans)
 
                 self.player.home_base.spawn(xClosestTrans, yClosestTrans, "martyr")
 
@@ -82,7 +82,7 @@ class Spawn:
                         xClosestMiner = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
                         yClosestMiner = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
 
-            print(xClosestMiner, yClosestMiner)
+            print("trans:", xClosestMiner, yClosestMiner)
 
             self.player.home_base.spawn(xClosestMiner, yClosestMiner, "transport")
         #else nothing spawns
