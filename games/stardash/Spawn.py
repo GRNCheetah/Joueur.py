@@ -29,7 +29,7 @@ class Spawn:
         #Get the closest of the miners, transporters, and asteroids
         closestMiner = [999999, 9999999]
         closestTrans = [999999, 9999999]
-        closestRock = [self.player.home_base.x + self.player.home_base.radius if game.bodies[2].x > self.player.home_base.x else self.player.home_base.x - self.player.home_base.radius, self.player.home_base.y]
+        closestRock = [self.player.home_base.x + self.player.home_base.radius if self.game.bodies[2].x > self.player.home_base.x else self.player.home_base.x - self.player.home_base.radius, self.player.home_base.y]
 
         t1 = time()
         for u in self.player.units:
