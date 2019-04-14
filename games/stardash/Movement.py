@@ -16,6 +16,12 @@ class Movement:
         self.mine_spot_x = sunX + sunR
         self.mine_spot_y = sunY
 
+        if sunR < 0:  # To the left
+            self.home_x = self.player.home_base.x + self.player.home_base.radius - 10
+        else:  # To the right
+            self.home_x = self.player.home_base.x - self.player.home_base.radius + 10
+        self.home_y = self.player.home_base.y
+
 
 
     def move(self):
@@ -163,15 +169,11 @@ class Movement:
                 if ship.energy >= numDashes: # Dash
                     ship.dash(self.mine_spot_x, self.mine_spot_y)
 
-            elif (self._inv(ship) >= ship.job.carry_limit) and ship.safe(x, y):
+            elif (self._inv(ship) >= ship.job.carry_limit) and ship.safe(self.home_x, self.home_y): # Go back home
                     #x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
-                if sunR < 0: # To the left
-                    x = self.player.home_base.x + self.player.home_base.radius - 10
-                else: # To the right
-                    x = self.player.home_base.x - self.player.home_base.radius + 10
-                y = self.player.home_base.y
+
                 if ship.energy >= numDashes: # Dash
-                    ship.dash(x, y)
+                    ship.dash(self.home_x, self.home_y)
 
         print("Miner: ", time() - t)
 

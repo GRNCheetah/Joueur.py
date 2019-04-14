@@ -274,9 +274,9 @@ class Action:
                     mis[unit.get_group()]=unit
         numSquads=min(len(corvs),len(mars),len(mis))
         for i in range(numSquads):
-            if self.distance(corvs[i].x,corvs[i].y, mars[i].x, mars[i].y)<=64:
-                if self.distance(corvs[i].x,corvs[i].y, mis[i].x, mis[i].y)<=64:
-                    if self.distance(mars[i].x,mars[i].y, mis[i].x, mis[i].y)<=64:
+            if corvs[i] != 0 and mars[i] != 0 and self.distance(corvs[i].x,corvs[i].y, mars[i].x, mars[i].y)<=64:
+                if corvs[i] != 0 and mis[i] != 0 and self.distance(corvs[i].x,corvs[i].y, mis[i].x, mis[i].y)<=64:
+                    if mars[i] != 0 and mis[i] != 0 and self.distance(mars[i].x,mars[i].y, mis[i].x, mis[i].y)<=64:
                         corvs[i].set_assembled(True)
         for unit in self.player.units:
             if unit.job.title=='corvette':
@@ -285,7 +285,7 @@ class Action:
                 else:
                     self.moveToNearestEnemy(unit)
             elif unit.job.title=='martyr' or unit.job.title=='missileboat':
-                if unit.get_group()<=numSquads:
+                if unit.get_group()<=numSquads and unit.get_group() < len(corvs) and corvs[unit.get_group()] != 0:
                     if self.distance(unit.x,unit.y,corvs[unit.get_group()].x,corvs[unit.get_group()].y)>64:
                         self.find_dash(unit, corvs[unit.get_group()].x, corvs[unit.get_group()].y)
         
