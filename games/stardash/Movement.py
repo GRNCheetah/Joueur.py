@@ -38,12 +38,6 @@ class Movement:
                 self.moveMiner(ship)
             elif ship.job.title == "transport":
                 self.moveMiner(ship)
-            elif ship.job.title == "corvette" and c < 6:
-                #self.moveCorvette(ship)
-                pass
-            elif ship.job.title == "missileboat" and c < 6:
-                #self.moveMissileBoat(ship)
-                pass
             elif ship.job.title == "martyr" and c < 6:
                 self.moveMartyr(ship)
                 pass
