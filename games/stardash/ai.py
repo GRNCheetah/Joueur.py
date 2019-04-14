@@ -4,7 +4,7 @@ from joueur.base_ai import BaseAI
 
 # <<-- Creer-Merge: imports -->> - Code you add between this comment and the end comment will be preserved between Creer re-runs.
 # you can add additional import(s) here
-from games.stardash.test import me
+from games.stardash.Movement import moveMiner
 # <<-- /Creer-Merge: imports -->>
 
 class AI(BaseAI):
@@ -162,11 +162,16 @@ class AI(BaseAI):
             if ship.job.title == "transport":
                 pass
             if ship.job.title == "missileboat":
-                pass'''
+                pass
 
 
 
-        me()
+
+
+
+        me()'''
+
+        moveMiner(self.player.units[0], self.game, self.player, "myth", [])
         return True
         # <<-- /Creer-Merge: runTurn -->>
 
