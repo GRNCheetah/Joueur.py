@@ -8,6 +8,8 @@ class Movement:
         self.player = p
         self.game = g
 
+        self.endgame = False
+
         sunX = self.game.bodies[2].x
         sunY = self.game.bodies[2].y
         sunR = self.game.bodies[2].radius + 250
@@ -49,6 +51,9 @@ class Movement:
                 pass
             elif c >= 6:
                 attack = True
+                if self.game.current_turn > 12:
+                    self.endgame = True
+
 
         return attack
 
@@ -165,15 +170,32 @@ class Movement:
         if not ship.acted:
 
             numDashes = math.ceil((self._distance(ship.x, ship.y, self.mine_spot_x, self.mine_spot_y) / self.game.dash_distance) * self.game.dash_cost)
-            if (self._inv(ship) < ship.job.carry_limit) and ship.safe(self.mine_spot_x, self.mine_spot_y) and ship.energy >= numDashes:
+            # Hail mary to the Mythicite
+            if (self._inv(ship) < ship.job.carry_limit) and self.endgame:
+                x = self.game.bodies[3].next_x
+                y = self.game.bodies[3].next_y
+                if (ship.safe(x,y)):
+                    if ship.energy >= numDashes:  # Dash
+                        ship.dash(x, y)
+                    else:  # Something is not right
+                        x, y = self._moveTo(ship.x, ship.y, x, y, moves)
+                        ship.move(ship.x + x, ship.y + y)
+            # Going to the belt
+            elif (self._inv(ship) < ship.job.carry_limit) and ship.safe(self.mine_spot_x, self.mine_spot_y):
                 if ship.energy >= numDashes: # Dash
                     ship.dash(self.mine_spot_x, self.mine_spot_y)
-
+                else: # Something is not right
+                    x, y = self._moveTo(ship.x, ship.y, self.mine_spot_x, self.mine_spot_y, moves)
+                    ship.move(ship.x+x, ship.y+y)
+            # Going home
             elif (self._inv(ship) >= ship.job.carry_limit) and ship.safe(self.home_x, self.home_y): # Go back home
                     #x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
 
                 if ship.energy >= numDashes: # Dash
                     ship.dash(self.home_x, self.home_y)
+                else: # Something is not right
+                    x, y = self._moveTo(ship.x, ship.y, self.mine_spot_x, self.mine_spot_y, moves)
+                    ship.move(ship.x+x, ship.y+y)
 
         print("Miner: ", time() - t)
 
