@@ -41,7 +41,7 @@ class Spawn:
             print(self.player.home_base.x, self.player.home_base.y, self.player.home_base.radius)
             print(xClosestResource, yClosestResource)
 
-            self.player.home_base.spawn(xClosestResource, yClosestResource, "miner")
+            self.player.home_base.spawn(self.player.home_base.x+1, self.player.home_base.y+1, "miner")
         elif self.player.money >= 75:
             xClosestTrans = 0
             yClosestTrans = 0
@@ -52,7 +52,7 @@ class Spawn:
                         xClosestTrans = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
                         yClosestTrans = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
 
-            self.player.home_base.spawn(xClosestTrans, yClosestTrans, "transport")
+            self.player.home_base.spawn(self.player.home_base.x+1, self.player.home_base.y+1, "transport")
         #else nothing spawns
 
 
