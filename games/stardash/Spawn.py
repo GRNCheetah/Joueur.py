@@ -9,6 +9,7 @@ class Spawn:
         self.amtCorv = 0
         self.amtShield = 0
         self.amtTrans = 0
+        self.amtMissile = 0
 
     #Find the closest point to b that is on the circle of my spawning range
     def findCX(self, aX, aY, bX, bY, r):
@@ -19,25 +20,36 @@ class Spawn:
     def spawn(self):
         t = time()
 
+        self.amtMiners = 0
+        self.amtCorv = 0
+        self.amtShield = 0
+        self.amtTrans = 0
+        self.amtMissile = 0
+
         #Get the closest of the miners, transporters, and asteroids
-        closestMiner = [self.player.home_base.x + self.player.home_base.radius, self.player.home_base.y]
+        closestMiner = [999999, 9999999]
         closestTrans = [999999, 9999999]
-        closestRock = [999999, 9999999]
+        closestRock = [self.player.home_base.x + self.player.home_base.radius, self.player.home_base.y]
 
         t1 = time()
         for u in self.player.units:
-            if u.x < closestTrans[0] and u.y < closestTrans[1]:
-                closestTrans[0] = self.findCX(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
-                closestTrans[1] = self.findCY(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
+            if u.job.title == "miner":
+                if u.x < closestMiner[0] and u.y < closestMiner[1]:
+                    closestMiner[0] = self.findCX(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
+                    closestMiner[1] = self.findCY(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
+                    self.amtMiners += 1
+            elif u.job.title == "transporter":
+                if u.x < closestTrans[0] and u.y < closestTrans[1]:
+                    closestTrans[0] = self.findCX(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
+                    closestTrans[1] = self.findCY(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
+                    self.amtTrans += 1
+            elif u.job.title == "corvette":
+                self.amtCorv += 1
+            elif u.job.title == "martyr":
+                self.amtShield += 1
+            elif u.job.title == "missileboat":
+                self.amtMissile += 1
 
-        for b in range(4, len(self.game.bodies)):
-            if self.game.bodies[b].x < closestRock[0] and self.game.bodies[b].y < closestRock[1]:
-                closestRock[0] = self.findCX(self.player.home_base.x, self.player.home_base.y,
-                                               self.game.bodies[b].x, self.game.bodies[b].y,
-                                               self.player.home_base.radius)
-                closestRock[1] = self.findCY(self.player.home_base.x, self.player.home_base.y,
-                                               self.game.bodies[b].x, self.game.bodies[b].y,
-                                               self.player.home_base.radius)
         print("init fors:", format(time() - t1, '.10f'))
         ###############################################
 
@@ -51,7 +63,11 @@ class Spawn:
 
             #print("trans:", closestMiner[0], closestMiner[1])
             if not self.player.home_base.spawn(closestMiner[0], closestMiner[1], "transport"):
-                self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "transport")
+                if self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "transport"):
+                    self.amtTrans += 1
+            else:
+                self.amtTrans += 1
+
 
             print("first run:", format(time() - t1, '.10f'))
 
@@ -63,7 +79,10 @@ class Spawn:
 
             #print("trans:", closestMiner[0], closestMiner[1])
             if not self.player.home_base.spawn(closestMiner[0], closestMiner[1], "transport"):
-                self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "transport")
+                if self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "transport"):
+                    self.amtTrans += 1
+            else:
+                self.amtTrans += 1
 
 
             if self.player.money < 150:
@@ -73,7 +92,10 @@ class Spawn:
             while self.player.money >= 150:
                 #print("miners:", closestRock[0], closestRock[1])
                 if not self.player.home_base.spawn(closestRock[0], closestRock[1], "miner"):
-                    self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "miner")
+                    if self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "miner"):
+                        self.amtMiners += 1
+                else:
+                    self.amtMiners += 1
             print("2nd run:", format(time() - t1, '.10f'))
 
         elif self.runCnt == 2:
@@ -90,8 +112,52 @@ class Spawn:
 
             print("3rd run:", format(time() - t1, '.10f'))
 
-        elif self.runCnt > 2: #alternate spawning miners and corvettes
+        elif self.runCnt > 2: #do cool stuff
             t1 = time()
+            #make all unit counts even
+            while self.player.money >= 100 and (self.amtCorv < self.amtShield or self.amtCorv < self.amtMissile):
+                #add more corvs
+                self.player.home_base.spawn(closestRock[0], closestRock[1], "corvette")
+                self.amtCorv += 1
+
+            while self.player.money >= 150 and (self.amtShield < self.amtCorv or self.amtShield < self.amtMissile):
+                #add more shields
+                self.player.home_base.spawn(closestRock[0], closestRock[1], "martyr")
+                self.amtShield += 1
+
+            while self.player.money >= 100 and (self.amtMissile < self.amtCorv or self.amtMissile < self.amtShield):
+                #add more missiles
+                self.player.home_base.spawn(closestRock[0], closestRock[1], "missileboat")
+                self.amtMissile += 1
+
+            cnt = 0
+            while self.amtCorv < 4:
+                if cnt == 0 and self.player.money >= 100:
+                    self.player.home_base.spawn(closestRock[0], closestRock[1], "corvette")
+                    self.amtCorv += 1
+                    cnt += 1
+                elif cnt == 1 and self.player.money >= 100:
+                    self.player.home_base.spawn(closestRock[0], closestRock[1], "missileboat")
+                    self.amtMissile += 1
+                    cnt += 1
+                elif self.player.money >= 150:
+                    self.player.home_base.spawn(closestRock[0], closestRock[1], "martyr")
+                    self.amtShield += 1
+                    cnt = 0
+                else:
+                    break
+
+            if self.amtCorv >= 4:
+                while self.player.money >= 150:
+                    # print("miners:", closestRock[0], closestRock[1])
+                    if not self.player.home_base.spawn(closestRock[0], closestRock[1], "miner"):
+                        if self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "miner"):
+                            self.amtMiners += 1
+                    else:
+                        self.amtMiners += 1
+            print("4corvs or miners:", format(time() - t1, '.10f'))
+
+            """t1 = time()
             if self.runCnt % 2 == 1: #miners
                 if self.player.money < 150:
                     return
@@ -137,7 +203,7 @@ class Spawn:
                     else:
                         break
                     self.amtCorv += 1
-                print("corvettes:", format(time() - t1, '.10f'))
+                print("corvettes:", format(time() - t1, '.10f'))"""
 
         self.runCnt += 1
         print("Spawn:", format(time() - t, '.10f'))
