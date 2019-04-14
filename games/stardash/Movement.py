@@ -1,7 +1,5 @@
 import math
 
-from time import time
-
 class Movement:
 
     def __init__(self, p, g):

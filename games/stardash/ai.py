@@ -7,7 +7,6 @@ from joueur.base_ai import BaseAI
 from games.stardash.Movement import Movement
 from games.stardash.Action import Action
 from games.stardash.Spawn import Spawn
-from time import time
 # <<-- /Creer-Merge: imports -->>
 
 class AI(BaseAI):
