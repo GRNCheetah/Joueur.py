@@ -181,7 +181,7 @@ class AI(BaseAI):
         print("Spawn:", time() - t)
         t = time()
         if self.movement.move():
-            self.action.go_attack()
+            #self.action.go_attack()
             self.action.do_actions()
         print("Movement:", time() - t)
 
