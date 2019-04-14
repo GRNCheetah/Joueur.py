@@ -11,15 +11,24 @@ class Movement:
         self.game = g
 
 
+    def move(self):
+
+        for ship in self.player.units:
+            if ship.job.title == "miner":
+
+                pass
+
+
     def moveMiner(self, shipNum, mineral, taken):
         """Gets passed a ship, the game and the player.
 
         Moves a Miner towards the nearest asteroid.
         """
+        moves = self.player.units[shipNum].job.moves
 
         if (self._inv(shipNum) < self.player.units[shipNum].job.carry_limit) :
             minDist = self._distance(0, 0, self.game.size_x, self.game.size_y)
-            moves = self.player.units[shipNum].job.moves
+
             asteroids = self.game.bodies
             minAst = asteroids[0]
             for astNum in range(4, len(asteroids)):
@@ -50,12 +59,12 @@ class Movement:
             print(x, y)
             self.player.units[shipNum].move(self.player.units[shipNum].x + x , self.player.units[shipNum].y + y)
         else:
-            x, y = self._moveTo(self.player.units[shipNum].x, self.player.units[shipNum].y, self.player.home_base.x, self.player.home_base.y)
+            x, y = self._moveTo(self.player.units[shipNum].x, self.player.units[shipNum].y, self.player.home_base.x, self.player.home_base.y, moves)
             self.player.units[shipNum].move(self.player.units[shipNum].x + x, self.player.units[shipNum].y + y)
 
     def _inv(self, shipNum):
         ship = self.player.units[shipNum]
-        return ship.genarium + ship.legendarium + ship.mythicate + ship.rarium
+        return ship.genarium + ship.legendarium + ship.mythicite + ship.rarium
 
     def _moveTo(self, shipX, shipY, tarX, tarY, move):
         """Returns the x and y speed to get to target x and y.
