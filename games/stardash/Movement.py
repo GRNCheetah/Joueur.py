@@ -15,25 +15,25 @@ class Movement:
 
         for ship in self.player.units:
             if ship.job.title == "miner":
+                self.moveMiner(ship, "genarium", [])
 
-                pass
 
 
-    def moveMiner(self, shipNum, mineral, taken):
+    def moveMiner(self, ship, mineral, taken):
         """Gets passed a ship, the game and the player.
 
         Moves a Miner towards the nearest asteroid.
         """
-        moves = self.player.units[shipNum].job.moves
+        moves = ship.job.moves
 
-        if (self._inv(shipNum) < self.player.units[shipNum].job.carry_limit) :
+        if (self._inv(ship) < ship.job.carry_limit) :
             minDist = self._distance(0, 0, self.game.size_x, self.game.size_y)
 
             asteroids = self.game.bodies
             minAst = asteroids[0]
             for astNum in range(4, len(asteroids)):
                 if (asteroids[astNum].material_type == mineral):
-                    dist = self._distance(self.player.units[shipNum].x, self.player.units[shipNum].y, asteroids[astNum].x, asteroids[astNum].y)
+                    dist = self._distance(ship.x, ship.y, asteroids[astNum].x, asteroids[astNum].y)
                     if dist < minDist:
                         minDist = dist
                         minAst = asteroids[astNum]
@@ -41,8 +41,8 @@ class Movement:
             turns = 1 # to get to the asteroid
             nextX = minAst.next_x(turns)
             nextY = minAst.next_y(turns)
-            nextDist = self._distance((self.player.units[shipNum].x + moves * turns) if (self.player.units[shipNum].x - nextX > 0) else (self.player.units[shipNum].x - moves * turns),
-                                 (self.player.units[shipNum].y + moves * turns) if (self.player.units[shipNum].y - nextY > 0) else (self.player.units[shipNum].y - moves * turns),
+            nextDist = self._distance((ship.x + moves * turns) if (ship.x - nextX > 0) else (ship.x - moves * turns),
+                                 (ship.y + moves * turns) if (ship.y - nextY > 0) else (ship.y - moves * turns),
                                  nextX,
                                  nextY)
             while nextDist < currDist:
@@ -50,20 +50,19 @@ class Movement:
                 turns += 1
                 nextX = minAst.next_x(turns)
                 nextY = minAst.next_y(turns)
-                nextDist = self._distance((self.player.units[shipNum].x + moves * turns) if (self.player.units[shipNum].x - nextX > 0) else (self.player.units[shipNum].x - moves * turns),
-                                     (self.player.units[shipNum].y + moves * turns) if (self.player.units[shipNum].y - nextY > 0) else (self.player.units[shipNum].y - moves * turns),
+                nextDist = self._distance((ship.x + moves * turns) if (ship.x - nextX > 0) else (ship.x - moves * turns),
+                                     (ship.y + moves * turns) if (ship.y - nextY > 0) else (ship.y - moves * turns),
                                      nextX,
                                      nextY)
             '''
-            x, y = self._moveTo(self.player.units[shipNum].x, self.player.units[shipNum].y, minAst.x, minAst.y, moves)
+            x, y = self._moveTo(ship.x, ship.y, minAst.x, minAst.y, moves)
             print(x, y)
-            self.player.units[shipNum].move(self.player.units[shipNum].x + x , self.player.units[shipNum].y + y)
+            ship.move(ship.x + x , ship.y + y)
         else:
-            x, y = self._moveTo(self.player.units[shipNum].x, self.player.units[shipNum].y, self.player.home_base.x, self.player.home_base.y, moves)
-            self.player.units[shipNum].move(self.player.units[shipNum].x + x, self.player.units[shipNum].y + y)
+            x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
+            ship.move(ship.x + x, ship.y + y)
 
-    def _inv(self, shipNum):
-        ship = self.player.units[shipNum]
+    def _inv(self, ship):
         return ship.genarium + ship.legendarium + ship.mythicite + ship.rarium
 
     def _moveTo(self, shipX, shipY, tarX, tarY, move):
