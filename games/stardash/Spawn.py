@@ -49,7 +49,13 @@ class Spawn:
 
                 if not self.player.home_base.spawn(xClosestMiner, yClosestMiner, "transport"):
                     self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "transport")
+            else:
+                return
         elif self.runCnt == 1:
+            #return it there isn't enough $ for one
+            if self.player.money < 150:
+                return
+
             #spawn as many miners as possible
             while self.player.money >= 150:
                 xClosestResource = 9999999
@@ -70,6 +76,9 @@ class Spawn:
                 if not self.player.home_base.spawn(xClosestResource, yClosestResource, "miner"):
                     self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "miner")
         elif self.runCnt == 2:
+            if self.player.money < 150: #return if there isn't enough $ for one
+                return
+
             #Spawn 2 shields
             xClosestTrans = 9999999
             yClosestTrans = 9999999
@@ -90,6 +99,9 @@ class Spawn:
                 self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "martyr")
         elif self.runCnt > 2: #alternate spawning miners and corvettes
             if self.runCnt % 2 == 1: #miners
+                if self.player.money < 150:
+                    return
+
                 breakout = 1 # breaks out of while after a couple iterations of not being decremented
                 while self.player.money >= 150 and breakout < 5:
                     if amtMiners % 5 == 0: #make a transport every 5 miners
@@ -135,6 +147,9 @@ class Spawn:
 
                     amtMiners += 1
             else: #corvettes
+                if self.player.money < 100:
+                    return
+
                 while self.player.money >= 100:
                     if amtCorv % 2 == 0: #spawn corvette up at 45 degrees
                         xCoord = self.player.home_base.x + self.player.home_base.radius * cos(45)
