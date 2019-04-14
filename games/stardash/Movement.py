@@ -26,44 +26,50 @@ class Movement:
         """
         moves = ship.job.moves
 
-        if (self._inv(ship) < ship.job.carry_limit) :
-            minDist = self._distance(0, 0, self.game.size_x, self.game.size_y)
+        if not ship.acted:
+            if (self._inv(ship) < ship.job.carry_limit):
+                minDist = self._distance(0, 0, self.game.size_x, self.game.size_y)
 
-            # Finds the closest asteroid and puts it in minAst
-            asteroids = self.game.bodies
-            minAst = asteroids[0]
-            for astNum in range(4, len(asteroids)):
-                if (asteroids[astNum].material_type == mineral):
-                    dist = self._distance(ship.x, ship.y, asteroids[astNum].x, asteroids[astNum].y)
-                    if dist < minDist:
-                        minDist = dist
-                        minAst = asteroids[astNum]
+                # Finds the closest asteroid and puts it in minAst
+                asteroids = self.game.bodies
+                minAst = asteroids[0]
+                for astNum in range(4, len(asteroids)):
+                    if (asteroids[astNum].material_type == mineral):
+                        dist = self._distance(ship.x, ship.y, asteroids[astNum].x, asteroids[astNum].y)
+                        if dist < minDist:
+                            minDist = dist
+                            minAst = asteroids[astNum]
 
-            '''currDist = minDist
-            turns = 1 # to get to the asteroid
-            nextX = minAst.next_x(turns)
-            nextY = minAst.next_y(turns)
-            nextDist = self._distance((ship.x + moves * turns) if (ship.x - nextX > 0) else (ship.x - moves * turns),
-                                 (ship.y + moves * turns) if (ship.y - nextY > 0) else (ship.y - moves * turns),
-                                 nextX,
-                                 nextY)
-            while nextDist < currDist:
-                currDist = nextDist
-                turns += 1
+                '''currDist = minDist
+                turns = 1 # to get to the asteroid
                 nextX = minAst.next_x(turns)
                 nextY = minAst.next_y(turns)
                 nextDist = self._distance((ship.x + moves * turns) if (ship.x - nextX > 0) else (ship.x - moves * turns),
                                      (ship.y + moves * turns) if (ship.y - nextY > 0) else (ship.y - moves * turns),
                                      nextX,
-                                     nextY)'''
+                                     nextY)
+                while nextDist < currDist:
+                    currDist = nextDist
+                    turns += 1
+                    nextX = minAst.next_x(turns)
+                    nextY = minAst.next_y(turns)
+                    nextDist = self._distance((ship.x + moves * turns) if (ship.x - nextX > 0) else (ship.x - moves * turns),
+                                         (ship.y + moves * turns) if (ship.y - nextY > 0) else (ship.y - moves * turns),
+                                         nextX,
+                                         nextY)'''
 
-            x, y = self._moveTo(ship.x, ship.y, minAst.x, minAst.y, moves)
-            print(turns)
-            print(x, y)
-            ship.move(ship.x + x, ship.y + y)
-        else:
-            x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
-            ship.move(ship.x + x, ship.y + y)
+                x, y = self._moveTo(ship.x, ship.y, minAst.x, minAst.y, moves)
+                print(x, y)
+                ship.move(ship.x + x, ship.y + y)
+                if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, minAst.x, minAst.y) >= 25:
+                    x, y = self._moveTo(ship.x, ship.y, minAst.x, minAst.y, moves)
+                    ship.dash(ship.x + x, ship.y + y)
+            else:
+                x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
+                ship.move(ship.x + x, ship.y + y)
+                if ship.energy > (ship.job.energy * .3) and self._distance(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y) >= 25:
+                    x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
+                    ship.dash(ship.x + x, ship.y + y)
 
     def _inv(self, ship):
         return ship.genarium + ship.legendarium + ship.mythicite + ship.rarium

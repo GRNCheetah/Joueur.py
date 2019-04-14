@@ -21,7 +21,7 @@ class Action:
             neighbors=[]
             for body in self.game.bodies:
                 if body.body_type=='asteroid':
-                    if (body.x-unit.x)**2+(body.y-unit.y)**2 <= unit.job.range:
+                    if ((body.x-unit.x)**2+(body.y-unit.y)**2)**.5 <= unit.job.range:
                         neighbors.append(body)
             myths=[]
             legends=[]
