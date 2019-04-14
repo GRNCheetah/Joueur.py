@@ -17,9 +17,67 @@ class Movement:
 
         for ship in self.player.units:
             if ship.job.title == "miner":
-                self.moveMiner(ship, "genarium")
+                self.moveMiner(ship)
+            elif ship.job.title == "transport":
+                self.moveTransport(ship)
 
-    def moveMiner(self, ship, mineral):
+
+    def moveTransport(self, ship):
+        moves = ship.job.moves
+
+        if not ship.acted:
+            if (self._inv(ship) < ship.job.carry_limit): # Go towards the miners
+                maxDist = 0
+
+                # Finds the farthest miner from the home planet
+                ships = self.player.units
+                if len(ships) > 0:
+                    maxShip = ships[0]
+                    for shipNum in range(1, len(ships)):
+                        dist2planet = self._distance(ship.x, ship.y, ships[shipNum].x, ships[shipNum].y)
+                        if dist2planet > maxDist:
+                            maxDist = dist2planet
+                            maxShip = ships[shipNum]
+
+                    x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
+                    print(x, y)
+                    ship.move(ship.x + x, ship.y + y)
+                    if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, maxShip.x, maxShip.y) >= (moves * .5):
+                        x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
+                        ship.dash(ship.x + x, ship.y + y)
+            else: # Go home to drop off
+                x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
+                ship.move(ship.x + x, ship.y + y)
+                if ship.energy > (ship.job.energy * .3) and self._distance(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y) >= (moves * .5):
+                    x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
+                    ship.dash(ship.x + x, ship.y + y)
+
+    def moveMartyr(self, ship):
+        moves = ship.job.moves
+
+        if not ship.acted:
+            if (self._inv(ship) < ship.job.carry_limit): # Go towards the miners
+                maxDist = 0
+
+                # Finds the farthest miner from the home planet
+                ships = self.player.units
+                if len(ships) > 0:
+                    maxShip = ships[0]
+                    for shipNum in range(1, len(ships)):
+                        dist2planet = self._distance(ship.x, ship.y, ships[shipNum].x, ships[shipNum].y)
+                        if dist2planet > maxDist:
+                            maxDist = dist2planet
+                            maxShip = ships[shipNum]
+
+                    x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
+                    print(x, y)
+                    ship.move(ship.x + x, ship.y + y)
+                    if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, maxShip.x, maxShip.y) >= (moves * .5):
+                        x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
+                        ship.dash(ship.x + x, ship.y + y)
+
+
+    def moveMiner(self, ship):
         """Gets passed a ship, the game and the player.
 
         Moves a Miner towards the nearest asteroid.
@@ -60,13 +118,13 @@ class Movement:
                 x, y = self._moveTo(ship.x, ship.y, minAst.x, minAst.y, moves)
                 print(x, y)
                 ship.move(ship.x + x, ship.y + y)
-                if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, minAst.x, minAst.y) >= 25:
+                if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, minAst.x, minAst.y) >= (moves * .5):
                     x, y = self._moveTo(ship.x, ship.y, minAst.x, minAst.y, moves)
                     ship.dash(ship.x + x, ship.y + y)
             else:
                 x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
                 ship.move(ship.x + x, ship.y + y)
-                if ship.energy > (ship.job.energy * .3) and self._distance(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y) >= 25:
+                if ship.energy > (ship.job.energy * .3) and self._distance(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y) >= (moves * .5):
                     x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
                     ship.dash(ship.x + x, ship.y + y)
 
