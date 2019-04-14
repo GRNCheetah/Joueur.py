@@ -34,6 +34,7 @@ class Spawn:
         #spawn miner if I have the money and the amount of miners is less than 5(at the start)
         # or if i need to add a transport
         makeMartyr = False
+        print("planet:", self.player.home_base.x, self.player.home_base.y, self.player.home_base.radius)
         if self.player.money >= 150:
 
             if not makeMartyr and (amtMiners < 5 or amtMiners % 5 != 0):
@@ -50,6 +51,8 @@ class Spawn:
                                                        self.game.bodies[b].x, self.game.bodies[b].y,
                                                        self.player.home_base.radius)
 
+                print(xClosestResource, yClosestResource)
+
                 self.player.home_base.spawn(xClosestResource, yClosestResource, "miner")
             else:
                 #spawn closest to the closest transport
@@ -63,8 +66,9 @@ class Spawn:
                             xClosestTrans = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
                             yClosestTrans = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
 
-                self.player.home_base.spawn(xClosestTrans, yClosestTrans, "martyr")
+                print(xClosestTrans, xClosestTrans)
 
+                self.player.home_base.spawn(xClosestTrans, yClosestTrans, "martyr")
 
         elif self.player.money >= 75:
             #spawn closest to the closest miner
@@ -77,6 +81,8 @@ class Spawn:
                     if u.x < xClosestMiner and u.y < yClosestMiner:
                         xClosestMiner = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
                         yClosestMiner = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
+
+            print(xClosestMiner, yClosestMiner)
 
             self.player.home_base.spawn(xClosestMiner, yClosestMiner, "transport")
         #else nothing spawns
