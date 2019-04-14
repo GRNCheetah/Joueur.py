@@ -79,12 +79,14 @@ class AI(BaseAI):
         """
         # <<-- Creer-Merge: runTurn -->> - Code you add between this comment and the end comment will be preserved between Creer re-runs.
 
-        self.action.do_actions()
-
-        self.spawn.spawn()
-        if self.movement.move():
+        try:
             self.action.do_actions()
 
+            self.spawn.spawn()
+            if self.movement.move():
+                self.action.do_actions()
+        except:
+            pass
 
         return True
         # <<-- /Creer-Merge: runTurn -->>
