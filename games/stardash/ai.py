@@ -59,7 +59,7 @@ class AI(BaseAI):
         tracking anything you can update it here.
         """
         # <<-- Creer-Merge: game-updated -->> - Code you add between this comment and the end comment will be preserved between Creer re-runs.
-        # replace with your game updated logic
+
         # <<-- /Creer-Merge: game-updated -->>
 
     def end(self, won, reason):

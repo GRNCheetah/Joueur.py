@@ -10,7 +10,6 @@ class Movement:
         self.player = p
         self.game = g
 
-        self.taken = [] # The taken asteroids
 
 
     def move(self):
@@ -20,6 +19,12 @@ class Movement:
                 self.moveMiner(ship)
             elif ship.job.title == "transport":
                 self.moveTransport(ship)
+            elif ship.job.title == "corvette":
+                self.moveCorvette(ship)
+            elif ship.job.title == "missileboat":
+                self.moveMissileBoat(ship)
+            elif ship.job.title == "martyr":
+                self.moveMartyr(ship)
 
 
     def moveTransport(self, ship):
@@ -75,6 +80,57 @@ class Movement:
                     if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, maxShip.x, maxShip.y) >= (moves * .5):
                         x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
                         ship.dash(ship.x + x, ship.y + y)
+
+
+    def moveCorvette(self, ship):
+        """Two different """
+        c = 0
+        for s in self.player.units:
+            if s.job.title == "corvette":
+                c += 1 # Indicates which position to go to
+
+        if c < 6:
+            count = 0
+            for s in self.player.units:
+                if s.job.title == "corvette" and s != ship:
+                    count += 1  # Indicates which position to go to
+            moves = ship.job.moves
+
+            x_help = self.game.size_x/2
+            y_help = self.game.size_y/2 - self.game.bodies[2].radius # The amount of space between sun and top
+            # Top
+            positions = {
+                (x_help, (y_help * .3)),
+                (x_help, (y_help * .6)),
+                (x_help, (y_help * .9)),
+                (x_help, y_help + (y_help * .3)),
+                (x_help, y_help + (y_help * .6)),
+                (x_help, y_help + (y_help * .9))
+            }
+
+
+
+            # No send this corvette to the correct position
+            x, y = self._moveTo(ship.x, ship.y, positions[count][0], positions[count[1]], moves)
+            ship.move(ship.x + x, ship.y + y)
+
+
+
+
+
+
+        if not ship.acted and count < 6: # Defensive mode
+            # The offensive function is in Action,py
+
+
+
+
+
+
+        pass
+
+    def moveMissileBoat(self, ship):
+        pass
 
 
     def moveMiner(self, ship):
