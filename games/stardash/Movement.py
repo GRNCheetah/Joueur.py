@@ -39,7 +39,7 @@ class Movement:
             if ship.job.title == "miner":
                 self.moveMiner(ship)
             elif ship.job.title == "transport":
-                self.moveTransport(ship)
+                self.moveMiner(ship)
             elif ship.job.title == "corvette" and c < 6:
                 #self.moveCorvette(ship)
                 pass
@@ -59,16 +59,13 @@ class Movement:
 
 
 
-    def moveTransport(self, ship):
+    '''def moveTransport(self, ship):
         moves = ship.job.moves
         t = time()
 
         if not ship.acted:
             if (self._inv(ship) < ship.job.carry_limit): # Go towards the miners
                 maxDist = 0
-
-
-
 
                 # Finds the farthest miner from the home planet
                 ships = self.player.units
@@ -90,31 +87,24 @@ class Movement:
                 if ship.energy > (ship.job.energy * .3) and self._distance(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y) >= (moves * .5):
                     x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
                     ship.dash(ship.x + x, ship.y + y)
-        print("Transport: ", time() - t)
+        print("Transport: ", time() - t)'''
 
     def moveMartyr(self, ship):
         t = time()
         moves = ship.job.moves
 
         if not ship.acted:
-            maxDist = 0
+            # Going to the belt
+            if ship.safe(self.mine_spot_x, self.mine_spot_y) and ship.x != self.mine_spot_x and ship.y != self.mine_spot_y:
 
-            # Finds the farthest miner from the home planet
-            ships = self.player.units
-            if len(ships) > 0:
-                maxShip = ships[0]
-                for shipNum in range(1, len(ships)):
-                    dist2planet = self._distance(ship.x, ship.y, ships[shipNum].x, ships[shipNum].y)
-                    if dist2planet > maxDist:
-                        maxDist = dist2planet
-                        maxShip = ships[shipNum]
-
-                x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
-                #print(x, y)
-                ship.move(ship.x + x, ship.y + y)
-                if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, maxShip.x, maxShip.y) >= (moves * .5):
-                    x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
-                    ship.dash(ship.x + x, ship.y + y)
+                numDashes = math.ceil((self._distance(ship.x, ship.y, self.mine_spot_x,
+                                                      self.mine_spot_y) / self.game.dash_distance) * self.game.dash_cost)
+                if ship.energy >= numDashes:  # Dash
+                    print("dashing")
+                    ship.dash(self.mine_spot_x, self.mine_spot_y)
+                else:  # Something is not right
+                    x, y = self._moveTo(ship.x, ship.y, self.mine_spot_x, self.mine_spot_y, moves)
+                    ship.move(ship.x + x, ship.y + y)
 
         print("Martyr: ", time()-t)
 
@@ -172,10 +162,11 @@ class Movement:
             numDashes = math.ceil((self._distance(ship.x, ship.y, self.mine_spot_x, self.mine_spot_y) / self.game.dash_distance) * self.game.dash_cost)
             # Hail mary to the Mythicite
             if (self._inv(ship) < ship.job.carry_limit) and self.endgame:
-                x = self.game.bodies[3].next_x
-                y = self.game.bodies[3].next_y
+                x = self.game.bodies[3].next_x(2)
+                y = self.game.bodies[3].next_y(2)
                 if (ship.safe(x,y)):
                     if ship.energy >= numDashes:  # Dash
+                        print("dashing")
                         ship.dash(x, y)
                     else:  # Something is not right
                         x, y = self._moveTo(ship.x, ship.y, x, y, moves)
@@ -183,6 +174,7 @@ class Movement:
             # Going to the belt
             elif (self._inv(ship) < ship.job.carry_limit) and ship.safe(self.mine_spot_x, self.mine_spot_y):
                 if ship.energy >= numDashes: # Dash
+                    print("dashing")
                     ship.dash(self.mine_spot_x, self.mine_spot_y)
                 else: # Something is not right
                     x, y = self._moveTo(ship.x, ship.y, self.mine_spot_x, self.mine_spot_y, moves)
@@ -192,6 +184,7 @@ class Movement:
                     #x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
 
                 if ship.energy >= numDashes: # Dash
+                    print("dashing")
                     ship.dash(self.home_x, self.home_y)
                 else: # Something is not right
                     x, y = self._moveTo(ship.x, ship.y, self.mine_spot_x, self.mine_spot_y, moves)
