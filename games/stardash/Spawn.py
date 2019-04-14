@@ -54,7 +54,7 @@ class Spawn:
                 print("miners:", xClosestResource, yClosestResource)
 
                 self.player.home_base.spawn(xClosestResource, yClosestResource, "miner")
-            else:
+            elif makeMartyr:
                 #spawn closest to the closest transport
                 makeMartyr = False
                 xClosestTrans = 9999999
