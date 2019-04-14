@@ -100,34 +100,34 @@ class Movement:
             y_help = self.game.size_y/2 - self.game.bodies[2].radius # The amount of space between sun and top
             # Top
             positions = {
-                (x_help, (y_help * .3)),
-                (x_help, (y_help * .6)),
-                (x_help, (y_help * .9)),
-                (x_help, y_help + (y_help * .3)),
-                (x_help, y_help + (y_help * .6)),
-                (x_help, y_help + (y_help * .9))
+                [None, (x_help, (y_help * .3))],
+                [None, (x_help, (y_help * .6))],
+                [None, (x_help, (y_help * .9))],
+                [None, (x_help, y_help + (y_help * .3))],
+                [None, (x_help, y_help + (y_help * .6))],
+                [None, (x_help, y_help + (y_help * .9))]
             }
+
+            # Find empty position
+            empty = None
+            target = None
+            for pos in positions:
+                if not pos[0]: # Hold an empty
+                    empty = pos
+                elif pos[0] == ship: # Here is the pos
+                    target = pos[1]
+                    break
+            if not target:
+                empty[0] = ship
+                target = empty[1]
+                print(">>", empty[0], positions)
 
 
 
             # No send this corvette to the correct position
-            x, y = self._moveTo(ship.x, ship.y, positions[count][0], positions[count[1]], moves)
+            x, y = self._moveTo(ship.x, ship.y, target[0],  target[1], moves)
             ship.move(ship.x + x, ship.y + y)
 
-
-
-
-
-
-        if not ship.acted and count < 6: # Defensive mode
-            # The offensive function is in Action,py
-
-
-
-
-
-
-        pass
 
     def moveMissileBoat(self, ship):
         pass
