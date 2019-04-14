@@ -12,9 +12,9 @@ class Spawn:
 
     #Find the closest point to b that is on the circle of my spawning range
     def findCX(self, aX, aY, bX, bY, r):
-        return aX + r * ((bX - aX) / (((bX - aX) ** 2 + (bY - aY) ** 2)) ** 0.5)
+        return aX + r * ((bX - aX) / ((bX - aX) ** 2 + (bY - aY) ** 2) ** 0.5)
     def findCY(self, aX, aY, bX, bY, r):
-        return aY + r * ((bY - aY) / (((bX - aX) ** 2 + (bY - aY) ** 2)) ** 0.5)
+        return aY + r * ((bY - aY) / ((bX - aX) ** 2 + (bY - aY) ** 2) ** 0.5)
 
     def spawn(self):
         t = time()
@@ -28,12 +28,12 @@ class Spawn:
         for u in self.player.units:
             if u.job.title == "miner":
                 if u.x < closestMiner[0] and u.y < closestMiner[1]:
-                    closestMiner[0] = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
-                    closestMiner[1] = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
+                    closestMiner[0] = self.findCX(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
+                    closestMiner[1] = self.findCY(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
             elif u.job.title == "transporter":
                 if u.x < closestTrans[0] and u.y < closestTrans[1]:
-                    closestTrans[0] = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
-                    closestTrans[1] = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
+                    closestTrans[0] = self.findCX(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
+                    closestTrans[1] = self.findCY(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
 
         for b in range(4, len(self.game.bodies)):
             if self.game.bodies[b].x < closestRock[0] and self.game.bodies[b].y < closestRock[1]:
