@@ -9,9 +9,9 @@ class Spawn:
 
     #Find the closest point to b that is on the circle of my spawning range
     def findCX(self, aX, aY, bX, bY, r):
-        return aX + r * ((bX - aX) / ((bX - aX) ** 2 + (bY - aY) ** 2) ** 0.5)
+        return aX + r * ((bX - aX) / (((bX - aX) ** 2 + (bY - aY) ** 2)) ** 0.5)
     def findCY(self, aX, aY, bX, bY, r):
-        return aY + r * ((bY - aY) / ((bX - aX) ** 2 + (bY - aY) ** 2) ** 0.5)
+        return aY + r * ((bY - aY) / (((bX - aX) ** 2 + (bY - aY) ** 2)) ** 0.5)
 
     def spawn(self):
         #get the amount of each unit, if it is somehow a missileboat, skip it
