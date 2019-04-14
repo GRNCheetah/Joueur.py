@@ -51,8 +51,26 @@ class Spawn:
                     self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "transport")
             else:
                 return
-        elif self.runCnt == 1:
+        elif self.runCnt == 1: #spawn another transporter then the res of the $ miners
             #return it there isn't enough $ for one
+            if self.player.money < 75:
+                return
+
+            xClosestMiner = 9999999
+            yClosestMiner = 9999999
+
+            # find the closest miner to the transporter and do math to find the closest point on the edge of the circle
+            for u in self.player.units:
+                if u.job.title == "miner":
+                    if u.x < xClosestMiner and u.y < yClosestMiner:
+                        xClosestMiner = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
+                        yClosestMiner = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
+
+            print("trans:", xClosestMiner, yClosestMiner)
+
+            if not self.player.home_base.spawn(xClosestMiner, yClosestMiner, "transport"):
+                self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "transport")
+
             if self.player.money < 150:
                 return
 
