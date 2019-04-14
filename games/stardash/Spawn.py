@@ -38,6 +38,7 @@ class Spawn:
                     xClosestResource = self.findCX(self.player.home_base.x, self.player.home_base.y, self.game.bodies[b].x, self.game.bodies[b].y, self.player.home_base.radius)
                     yClosestResource = self.findCY(self.player.home_base.x, self.player.home_base.y, self.game.bodies[b].x, self.game.bodies[b].y, self.player.home_base.radius)
 
+            print(self.player.home_base.x, self.player.home_base.y, self.player.home_base.radius)
             print(xClosestResource, yClosestResource)
 
             self.player.home_base.spawn(xClosestResource, yClosestResource, "miner")
