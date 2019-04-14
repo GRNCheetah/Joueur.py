@@ -37,6 +37,20 @@ class Unit(GameObject):
         self._shield = 0
         self._x = 0
         self._y = 0
+        self.group=-1
+        self.assembled=False
+    
+    def set_assembled(self, assembled):
+        self.assembled=assembled
+    
+    def get_assembled(self):
+        return self.assembled
+        
+    def set_group(self, group):
+        self.group=group
+        
+    def get_group(self):
+        return self.group
 
     @property
     def acted(self):
