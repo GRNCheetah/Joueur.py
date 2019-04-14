@@ -20,20 +20,15 @@ class Spawn:
         t = time()
 
         #Get the closest of the miners, transporters, and asteroids
-        closestMiner = [999999, 9999999]
+        closestMiner = [self.player.home_base.x + self.player.home_base.radius, self.player.home_base.y]
         closestTrans = [999999, 9999999]
         closestRock = [999999, 9999999]
 
         t1 = time()
         for u in self.player.units:
-            if u.job.title == "miner":
-                if u.x < closestMiner[0] and u.y < closestMiner[1]:
-                    closestMiner[0] = self.findCX(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
-                    closestMiner[1] = self.findCY(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
-            elif u.job.title == "transporter":
-                if u.x < closestTrans[0] and u.y < closestTrans[1]:
-                    closestTrans[0] = self.findCX(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
-                    closestTrans[1] = self.findCY(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
+            if u.x < closestTrans[0] and u.y < closestTrans[1]:
+                closestTrans[0] = self.findCX(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
+                closestTrans[1] = self.findCY(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
 
         for b in range(4, len(self.game.bodies)):
             if self.game.bodies[b].x < closestRock[0] and self.game.bodies[b].y < closestRock[1]:
