@@ -247,9 +247,9 @@ class Action:
                 lastMar=unit.get_group()
             elif unit.job.title=='missileboat' and unit.get_group()>lastMissile:
                 lastMissile=unit.get_group()
-        corvs = [0 for x in range(lastCorvette)]
-        mars = [0 for x in range(lastMar)]
-        mis = [0 for x in range(lastMissile)]
+        corvs = [0 for x in range(lastCorvette+1)]
+        mars = [0 for x in range(lastMar+1)]
+        mis = [0 for x in range(lastMissile+1)]
         for unit in self.player.units:
             if unit.job.title=='corvette':
                 if unit.get_group()==-1:
@@ -274,9 +274,9 @@ class Action:
                     mis[unit.get_group()]=unit
         numSquads=min(len(corvs),len(mars),len(mis))
         for i in range(numSquads):
-            if self._distance(corvs[i].x,corvs[i].y, mars[i].x, mars[i].y)<=64:
-                if self._distance(corvs[i].x,corvs[i].y, mis[i].x, mis[i].y)<=64:
-                    if self._distance(mars[i].x,mars[i].y, mis[i].x, mis[i].y)<=64:
+            if self.distance(corvs[i].x,corvs[i].y, mars[i].x, mars[i].y)<=64:
+                if self.distance(corvs[i].x,corvs[i].y, mis[i].x, mis[i].y)<=64:
+                    if self.distance(mars[i].x,mars[i].y, mis[i].x, mis[i].y)<=64:
                         corvs[i].set_assembled(True)
         for unit in self.player.units:
             if unit.job.title=='corvette':
