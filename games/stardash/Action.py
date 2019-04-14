@@ -153,6 +153,140 @@ class Action:
         self.shootProjectiles(corvette)
         if not corvette.acted:
             self.shootNonShielded(corvette)
+    
+    
+ def find_dash(self, unit, x, y):
+        """ This is an EXTREMELY basic pathfinding function to move your ship until it can dash to your target.
+            You REALLY should improve this functionality or make your own new one, since this is VERY basic and inefficient.
+            Like, for real.
+            Args:
+                unit (unit): The unit that will be moving.
+                x (int): The x coordinate of the destination.
+                y (int): The y coordinate of the destination.
+        """
+        # Gets the sun from the list of bodies.
+        sun = self.game.bodies[2]
+
+        while unit.moves >= 1:
+            if unit.safe(x, y) and unit.energy >= math.ceil((self.distance(unit.x, unit.y, x, y) / self.game.dash_distance) * self.game.dash_cost):
+                # Dashes if it is safe to dash to the point and we have enough energy to dash there.
+                unit.dash(x, y)
+
+                # Breaks out of the loop since we can't do anything else now.
+                break
+            else:
+                # Otherwise tries moving towards the target.
+
+                # The x and y modifiers for movement.
+                x_mod = 0
+                y_mod = 0
+
+                if unit.x < x or (y < sun.y and unit.y > sun.y or y > sun.y and unit.y < sun.y) and x > sun.x:
+                    # Move to the right if the destination is to the right or on the other side of the sun on the right side.
+                    x_mod = 1
+                elif unit.x > x or (y < sun.y and unit.y > sun.y or y > sun.y and unit.y < sun.y) and x < sun.x:
+                    # Move to the left if the destination is to the left or on the other side of the sun on the left side.
+                    x_mod = -1
+
+                if unit.y < y or (x < sun.x and unit.x > sun.x or x > sun.x and unit.x < sun.x) and y > sun.y:
+                    # Move down if the destination is down or on the other side of the sun on the lower side.
+                    y_mod = 1
+                elif unit.y > y or (x < sun.x and unit.x > sun.x or x > sun.x and unit.x < sun.x) and y < sun.y:
+                    # Move up if the destination is up or on the other side of the sun on the upper side.
+                    y_mod = -1
+
+                if x_mod != 0 and y_mod != 0 and not unit.safe(unit.x + x_mod, unit.y + y_mod):
+                    # Special case if we cannot safely move diagonally.
+                    if unit.safe(unit.x + x_mod, unit.y):
+                        # Only move horizontally if it is safe.
+                        y_mod = 0
+                    elif unit.safe(unit.x, unit.y + y_mod):
+                        # Only move vertically if it is safe.
+                        x_mod = 0
+
+                if unit.moves < math.sqrt(2) and x_mod != 0 and y_mod != 0:
+                    # Special case if we only have 1 move left and are trying to move 2.
+                    if unit.safe(unit.x + x_mod, unit.y):
+                        y_mod = 0
+                    elif unit.safe(unit.x, unit.y + y_mod):
+                        x_mod = 0
+                    else:
+                        break
+
+                if (x_mod != 0 or y_mod != 0) and (math.sqrt(math.pow(x_mod, 2) + math.pow(y_mod, 2)) >= unit.moves):
+                    # Tries to move if either of the modifiers is not zero (we are actually moving somewhere).
+                    unit.move(unit.x + x_mod, unit.y + y_mod)
+                else:
+                    # Breaks otherwise, since something probably went wrong.
+                    break
+
+    def _distance(self, shipX, shipY, tarX, tarY):
+        return ((shipX - tarX)**2 + (shipY - tarY)**2) ** .5
+        
+    
+    
+    def moveToNearestEnemy(self, unit):
+        minDistance=99999 #infinity
+        minEnemy=None
+        for enemy in self.player.opponent.units:
+            if self.distance(unit.x,unit.y,enemy.x,enemy.y)<minDistance:
+                minDistance=self.distance(unit.x,unit.y,enemy.x,enemy.y)
+                minEnemy=enemy
+        if self.distance(unit.x,unit.y,enemy.x,enemy.y)>unit.job.range:
+            self.find_dash(unit, enemy.x, enemy.y)
+    
+    def go_attack(self):
+        lastCorvette=-1
+        lastMar=-1
+        lastMissile=-1
+        for unit in self.player.units:
+            if unit.job.title=='corvette' and unit.get_group()>lastCorvette:
+                lastCorvette=unit.get_group()
+            elif unit.job.title=='martyr' and unit.get_group()>lastMar:
+                lastMar=unit.get_group()
+            elif unit.job.title=='missileboat' and unit.get_group()>lastMissle:
+                lastMissile=unit.get_group()
+        corvs = [0 for x in range(lastCorvette)]
+        mars = [0 for x in range(lastMar)]
+        mis = [0 for x in range(lastMissile)]
+        for unit in self.player.units:
+            if unit.job.title=='corvette':
+                if unit.get_group()==-1:
+                    corvs.append(unit)
+                    lastCorvette++
+                    unit.set_group(lastCorvette)
+                else:
+                    corvs[unit.get_group()]=unit
+            elif unit.job.title=='martyr':
+                if unit.get_group()==-1:
+                    mars.append(unit)
+                    lastMar++
+                    unit.set_group(lastMar)
+                else:
+                    mars[unit.get_group()]=unit
+            elif unit.job.title=='missileboat':
+                if unit.get_group()==-1:
+                    mis.append(unit)
+                    lastMissle++
+                    unit.set_group(lastMissle)
+                else:
+                    mis[unit.get_group()]=unit
+        numSquads=min(len(corvs),len(mars),len(mis))
+        for i in range(numSquads)
+            if self._distance(corvs[i].x,corvs[i].y, mars[i].x, mars[i].y)<=64:
+                if self._distance(corvs[i].x,corvs[i].y, mis[i].x, mis[i].y)<=64:
+                    if self._distance(mars[i].x,mars[i].y, mis[i].x, mis[i].y)<=64:
+                        corvs[i].set_assembled(True)
+        for unit in self.player.units:
+            if unit.job.title=='corvette':
+                if unit.get_assembled()==False:
+                    self.find_dash(unit, self.game.size_x/2, 12+unit.get_group()*5)
+                else:
+                    self.moveToNearestEnemy(unit)
+            elif unit.job.title=='martyr' or unit.job.title=='missileboat':
+                if unit.get_group()<=numSquads:
+                    if self.distance(unit.x,unit.y,corvs[unit.get_group()].x,corvs[unit.get_group()].y)>64:
+                        self.find_dash(unit, corvs[unit.get_group()].x, corvs[unit.get_group()].y)
         
     def do_actions(self):
         for unit in self.player.units:
