@@ -28,11 +28,14 @@ class Movement:
             elif ship.job.title == "transport":
                 self.moveTransport(ship)
             elif ship.job.title == "corvette" and c < 6:
-                self.moveCorvette(ship)
+                #self.moveCorvette(ship)
+                pass
             elif ship.job.title == "missileboat" and c < 6:
-                self.moveMissileBoat(ship)
+                #self.moveMissileBoat(ship)
+                pass
             elif ship.job.title == "martyr" and c < 6:
-                self.moveMartyr(ship)
+                #self.moveMartyr(ship)
+                pass    
             elif c >= 6:
                 attack = True
 
@@ -53,10 +56,8 @@ class Movement:
                 if len(ships) > 0:
                     maxShip = ships[0]
                     for shipNum in range(1, len(ships)):
-                        dist2planet = self._distance(ship.x, ship.y, ships[shipNum].x, ships[shipNum].y)
-                        if dist2planet > maxDist:
-                            maxDist = dist2planet
-                            maxShip = ships[shipNum]
+                        if ships[shipNum] == "miner":
+                            maxDist = self._distance(ship.x, ship.y, ships[shipNum].x, ships[shipNum].y)
                     if maxDist >= ship.job.range *.75:
                         x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
                         print(x, y)
@@ -96,6 +97,7 @@ class Movement:
                     if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, maxShip.x, maxShip.y) >= (moves * .5):
                         x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
                         ship.dash(ship.x + x, ship.y + y)
+
         print("Martyr: ", time()-t)
 
     def moveCorvette(self, ship):
@@ -150,16 +152,16 @@ class Movement:
         if not ship.acted:
             #ship.log('did not mine')
             if (self._inv(ship) < ship.job.carry_limit):
-                minDist = self._distance(0, 0, self.game.size_x, self.game.size_y)
+                #minDist = self._distance(0, 0, self.game.size_x, self.game.size_y)
 
                 # Finds the closest asteroid and puts it in minAst
-                asteroids = self.game.bodies
+                '''asteroids = self.game.bodies
                 minAst = asteroids[0]
                 for astNum in range(4, len(asteroids)):
                     dist = self._distance(ship.x, ship.y, asteroids[astNum].x, asteroids[astNum].y)
                     if dist < minDist:
                         minDist = dist
-                        minAst = asteroids[astNum]
+                        minAst = asteroids[astNum]'''
 
                 '''currDist = minDist
                 turns = 1 # to get to the asteroid
@@ -179,11 +181,17 @@ class Movement:
                                          nextX,
                                          nextY)'''
 
-                x, y = self._moveTo(ship.x, ship.y, minAst.x, minAst.y, moves)
+                sunX = self.game.bodies[2].x
+                sunY = self.game.bodies[2].y
+                sunR = self.game.bodies[2].radius + 250
+                if self.player.home_base.x < sunX / 2:
+                    sunR = sunR * -1
+
+                x, y = self._moveTo(ship.x, ship.y, sunX + sunR, minAst.y + sunR, moves)
                 #print(x, y)
                 ship.move(ship.x + x, ship.y + y)
-                if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, minAst.x, minAst.y) >= (moves * .5):
-                    x, y = self._moveTo(ship.x, ship.y, minAst.x, minAst.y, moves)
+                if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, sunX + sunR, minAst.y + sunR) >= (moves * .5):
+                    x, y = self._moveTo(ship.x, ship.y, sunX + sunR, minAst.y + sunR, moves)
                     ship.dash(ship.x + x, ship.y + y)
             else:
                 x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
