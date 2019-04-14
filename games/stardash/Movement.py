@@ -34,11 +34,10 @@ class Movement:
                 asteroids = self.game.bodies
                 minAst = asteroids[0]
                 for astNum in range(4, len(asteroids)):
-                    if (asteroids[astNum].material_type == mineral):
-                        dist = self._distance(ship.x, ship.y, asteroids[astNum].x, asteroids[astNum].y)
-                        if dist < minDist:
-                            minDist = dist
-                            minAst = asteroids[astNum]
+                    dist = self._distance(ship.x, ship.y, asteroids[astNum].x, asteroids[astNum].y)
+                    if dist < minDist:
+                        minDist = dist
+                        minAst = asteroids[astNum]
 
                 '''currDist = minDist
                 turns = 1 # to get to the asteroid

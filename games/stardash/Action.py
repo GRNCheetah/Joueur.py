@@ -29,7 +29,7 @@ class Action:
             genes=[]
             nones=[]
             for neighbor in neighbors:
-                if neighbor.material_type=='mythicite':
+                if neighbor.material_type=='mythicite' and self.game.current_turn < self.game.orbits_protected:
                     myths.append(neighbor)
                 elif neighbor.material_type=='legendarium':
                     legends.append(neighbor)
