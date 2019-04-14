@@ -3,6 +3,7 @@
 #    def __init__(self):
 #        pass
 
+from time import time
 
 class Movement:
 
@@ -41,6 +42,7 @@ class Movement:
 
     def moveTransport(self, ship):
         moves = ship.job.moves
+        t = time()
 
         if not ship.acted:
             if (self._inv(ship) < ship.job.carry_limit): # Go towards the miners
@@ -68,10 +70,11 @@ class Movement:
                 if ship.energy > (ship.job.energy * .3) and self._distance(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y) >= (moves * .5):
                     x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
                     ship.dash(ship.x + x, ship.y + y)
+        print("Transport: ", time() - t)
 
     def moveMartyr(self, ship):
+        t = time()
         moves = ship.job.moves
-        ship.log("SUCK MY ASS")
 
         if not ship.acted:
             if (self._inv(ship) < ship.job.carry_limit): # Go towards the miners
@@ -88,15 +91,16 @@ class Movement:
                             maxShip = ships[shipNum]
 
                     x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
-                    print(x, y)
+                    #print(x, y)
                     ship.move(ship.x + x, ship.y + y)
                     if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, maxShip.x, maxShip.y) >= (moves * .5):
                         x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
                         ship.dash(ship.x + x, ship.y + y)
-
+        print("Martyr: ", time()-t)
 
     def moveCorvette(self, ship):
         """Two different """
+        t = time()
 
         count = 0
         for s in self.player.units:
@@ -125,12 +129,11 @@ class Movement:
             else: # Found location
                 target = pos[1]
 
-
-
         # No send this corvette to the correct position
         x, y = self._moveTo(ship.x, ship.y, target[0],  target[1], moves)
         ship.move(ship.x + x, ship.y + y)
 
+        print("Corvette: ", time() - t)
 
     def moveMissileBoat(self, ship):
         pass
@@ -141,10 +144,11 @@ class Movement:
 
         Moves a Miner towards the nearest asteroid.
         """
+        t = time()
         moves = ship.job.moves
 
         if not ship.acted:
-            ship.log('did not mine')
+            #ship.log('did not mine')
             if (self._inv(ship) < ship.job.carry_limit):
                 minDist = self._distance(0, 0, self.game.size_x, self.game.size_y)
 
@@ -176,7 +180,7 @@ class Movement:
                                          nextY)'''
 
                 x, y = self._moveTo(ship.x, ship.y, minAst.x, minAst.y, moves)
-                print(x, y)
+                #print(x, y)
                 ship.move(ship.x + x, ship.y + y)
                 if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, minAst.x, minAst.y) >= (moves * .5):
                     x, y = self._moveTo(ship.x, ship.y, minAst.x, minAst.y, moves)
@@ -187,6 +191,8 @@ class Movement:
                 if ship.energy > (ship.job.energy * .3) and self._distance(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y) >= (moves * .5):
                     x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
                     ship.dash(ship.x + x, ship.y + y)
+
+        print("Miner: ", time() - t)
 
     def _inv(self, ship):
         return ship.genarium + ship.legendarium + ship.mythicite + ship.rarium

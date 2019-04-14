@@ -172,15 +172,20 @@ class AI(BaseAI):
 
 
         #self.movement.moveMiner(0, "genarium", [])
+        t = time()
         self.action.do_actions()
+        print("Actions:", time()-t)
+        t = time()
         self.spawn.spawn()
+        print("Spawn:", time() - t)
+        t = time()
         if self.movement.move():
             self.action.go_attack()
             self.action.do_actions()
+        print("Movement:", time() - t)
 
-
-        print(self.player.units[0].genarium, self.player.units[0].legendarium, self.player.units[0].mythicite, self.player.units[0].rarium)
-        self.game.bodies[2].log("Boomtastic")
+        #print(self.player.units[0].genarium, self.player.units[0].legendarium, self.player.units[0].mythicite, self.player.units[0].rarium)
+        #self.game.bodies[2].log("Boomtastic")
         return True
         # <<-- /Creer-Merge: runTurn -->>
 
