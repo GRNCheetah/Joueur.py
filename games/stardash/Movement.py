@@ -23,8 +23,8 @@ def moveMiner(ship, game, player, mineral, taken):
     turns = 1 # to get to the asteroid
     nextX = minAst.next_x(turns)
     nextY = minAst.next_y(turns)
-    nextDist = _distance((ship.x + moves * turns) if (ship.x - nextX > 0) else (ship.x - ship.move *turns),
-                         (ship.y + moves * turns) if (ship.y - nextY > 0) else (ship.y - ship.move *turns),
+    nextDist = _distance((ship.x + moves * turns) if (ship.x - nextX > 0) else (ship.x - moves * turns),
+                         (ship.y + moves * turns) if (ship.y - nextY > 0) else (ship.y - moves * turns),
                          nextX,
                          nextY)
     while nextDist < currDist:
@@ -32,8 +32,8 @@ def moveMiner(ship, game, player, mineral, taken):
         turns += 1
         nextX = minAst.next_x(turns)
         nextY = minAst.next_y(turns)
-        nextDist = _distance((ship.x + moves * turns) if (ship.x - nextX > 0) else (ship.x - ship.move * turns),
-                             (ship.y + moves * turns) if (ship.y - nextY > 0) else (ship.y - ship.move * turns),
+        nextDist = _distance((ship.x + moves * turns) if (ship.x - nextX > 0) else (ship.x - moves * turns),
+                             (ship.y + moves * turns) if (ship.y - nextY > 0) else (ship.y - moves * turns),
                              nextX,
                              nextY)
 
@@ -47,6 +47,10 @@ def _moveTo(shipX, shipY, tarX, tarY, move):
 
     This is to take care of the positives and negatives.
     """
+
+    x = move * ((tarX - shipX)/_distance)
+
+
     max_move = int(move / (2**.5)) # in single direction
 
     x = abs(shipX - tarX)
