@@ -6,7 +6,7 @@ class Action:
 
     def transfer_goods(self, transport):
         for unit in self.player.units:
-            if (transport.x-unit.x)**2+(transport.y-unit.y)**2 <= transport.job.range:
+            if ((transport.x-unit.x)**2+(transport.y-unit.y)**2)**.5 <= transport.job.range:
                 if unit.mythicite>0 and transport.mythicite+transport.legendarium+transport.rarium+transport.genarium<transport.job.carry_limit:
                     transport.transfer(unit,-1,'mythicite')
                 if unit.legendarium>0 and transport.mythicite+transport.legendarium+transport.rarium+transport.genarium<transport.job.carry_limit:
@@ -29,7 +29,7 @@ class Action:
             genes=[]
             nones=[]
             for neighbor in neighbors:
-                if neighbor.material_type=='mythicite' and self.game.current_turn < self.game.orbits_protected:
+                if neighbor.material_type=='mythicite' and self.game.current_turn > self.game.orbits_protected:
                     myths.append(neighbor)
                 elif neighbor.material_type=='legendarium':
                     legends.append(neighbor)
@@ -39,14 +39,26 @@ class Action:
                     genes.append(neighbor)
                 else:
                     nones.append(neighbor)
-            if len(myths)>0:
-                unit.mine(myths[0])
+            if len(myths)>0 and self.game.current_turn > self.game.orbits_protected:
+                if legends[0].amount >= 10:
+                    unit.mine(myths[0])
+                else:
+                    unit.mine(myths[1])
             elif len(legends)>0:
-                unit.mine(legends[0])
+                if legends[0].amount >= 10:
+                    unit.mine(legends[0])
+                else:
+                    unit.mine(legends[1])
             elif len(rares)>0:
-                unit.mine(rares[0])
+                if rares[0].amount >= 10:
+                    unit.mine(rares[0])
+                else:
+                    unit.mine(rares[1])
             elif len(genes)>0:
-                unit.mine(genes[0])
+                if genes[0].amount >= 10:
+                    unit.mine(genes[0])
+                else:
+                    unit.mine(genes[1])
 
     def do_miner(self, miner):
         self.mine_neighbors(miner)
