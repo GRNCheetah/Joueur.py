@@ -28,8 +28,8 @@ class Spawn:
                 amtMiners += 1
 
         #save up for miners
-        if self.player.money < 150 and amtMiners < 5:
-            return
+        #if self.player.money < 150 and amtMiners < 5:
+        #    return
 
         #spawn miner if I have the money and the amount of miners is less than 5(at the start)
         # or if i need to add a transport
@@ -51,7 +51,7 @@ class Spawn:
                                                        self.game.bodies[b].x, self.game.bodies[b].y,
                                                        self.player.home_base.radius)
 
-                print(xClosestResource, yClosestResource)
+                print("miners:", xClosestResource, yClosestResource)
 
                 self.player.home_base.spawn(xClosestResource, yClosestResource, "miner")
             else:
@@ -66,7 +66,7 @@ class Spawn:
                             xClosestTrans = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
                             yClosestTrans = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
 
-                print(xClosestTrans, xClosestTrans)
+                print("martyrs:", xClosestTrans, xClosestTrans)
 
                 self.player.home_base.spawn(xClosestTrans, yClosestTrans, "martyr")
 
@@ -82,7 +82,7 @@ class Spawn:
                         xClosestMiner = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
                         yClosestMiner = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
 
-            print(xClosestMiner, yClosestMiner)
+            print("trans:", xClosestMiner, yClosestMiner)
 
             self.player.home_base.spawn(xClosestMiner, yClosestMiner, "transport")
         #else nothing spawns
