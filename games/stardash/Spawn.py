@@ -35,8 +35,8 @@ class Spawn:
 
             for b in range(4, len(self.game.bodies)):
                 if self.game.bodies[b].x > xClosestResource and self.game.bodies[b].y > yClosestResource:
-                    xClosestResource = self.findCX(self.player.home_base.x, self.player.home_base.y, self.game.bodies[b].x, self.game.bodies[b].y)
-                    yClosestResource = self.findCY(self.player.home_base.x, self.player.home_base.y, self.game.bodies[b].x, self.game.bodies[b].y)
+                    xClosestResource = self.findCX(self.player.home_base.x, self.player.home_base.y, self.game.bodies[b].x, self.game.bodies[b].y, self.player.home_base.radius)
+                    yClosestResource = self.findCY(self.player.home_base.x, self.player.home_base.y, self.game.bodies[b].x, self.game.bodies[b].y, self.player.home_base.radius)
 
             self.player.home_base.spawn(xClosestResource, yClosestResource, "miner")
         elif self.player.money >= 75:
@@ -46,8 +46,8 @@ class Spawn:
             for u in self.player.units:
                 if u.job.title == "transport":
                     if u.x > xClosestTrans and u.y > yClosestTrans:
-                        xClosestTrans = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y)
-                        yClosestTrans = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y)
+                        xClosestTrans = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
+                        yClosestTrans = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
 
             self.player.home_base.spawn(xClosestTrans, yClosestTrans, "transport")
         #else nothing spawns
