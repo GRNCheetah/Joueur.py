@@ -6,6 +6,7 @@ from joueur.base_ai import BaseAI
 # you can add additional import(s) here
 from games.stardash.Movement import Movement
 from games.stardash.Action import Action
+from games.stardash.Spawn import Spawn
 # <<-- /Creer-Merge: imports -->>
 
 class AI(BaseAI):
@@ -49,6 +50,7 @@ class AI(BaseAI):
         #self.player.units[0].move(sunX, sunY)
         self.movement = Movement(self.player, self.game)
         self.action = Action(self.player, self.game)
+        self.spawn = Spawn(self.player, self.game)
 
         # <<-- /Creer-Merge: start -->>
 
@@ -168,8 +170,11 @@ class AI(BaseAI):
 
         me()'''
 
-        #self.action.do_actions()
-        self.movement.moveMiner(0, "myth", [])
+
+        self.movement.moveMiner(0, "genarium", [])
+        self.action.do_actions()
+        print(self.player.units[0].genarium, self.player.units[0].legendarium, self.player.units[0].mythicite, self.player.units[0].rarium)
+        self.spawn.spawn()
         return True
         # <<-- /Creer-Merge: runTurn -->>
 
