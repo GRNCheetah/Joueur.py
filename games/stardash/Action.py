@@ -2,7 +2,7 @@ class Action:
 
     def __init__(self, p, g):
         self.player = p
-		self.game = g
+        self.game = g
 
     def transfer_goods(self, transport):
         for unit in self.player.units:

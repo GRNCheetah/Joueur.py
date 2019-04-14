@@ -4,7 +4,9 @@ from joueur.base_ai import BaseAI
 
 # <<-- Creer-Merge: imports -->> - Code you add between this comment and the end comment will be preserved between Creer re-runs.
 # you can add additional import(s) here
-from games.stardash.Movement import moveMiner
+from games.stardash.Movement import Movement
+from games.stardash.Action import Action
+from games.stardash.Spawn import Spawn
 # <<-- /Creer-Merge: imports -->>
 
 class AI(BaseAI):
@@ -46,7 +48,9 @@ class AI(BaseAI):
         #sunX = self.game.bodies[2].x
         #sunY = self.game.bodies[2].y
         #self.player.units[0].move(sunX, sunY)
-
+        self.movement = Movement(self.player, self.game)
+        self.action = Action(self.player, self.game)
+        self.spawn = Spawn(self.player, self.game)
 
         # <<-- /Creer-Merge: start -->>
 
@@ -164,14 +168,14 @@ class AI(BaseAI):
             if ship.job.title == "missileboat":
                 pass
 
-
-
-
-
-
         me()'''
 
-        moveMiner(self.player.units[0], self.game, self.player, "myth", [])
+
+        #self.movement.moveMiner(0, "genarium", [])
+        self.movement.move()
+        self.action.do_actions()
+        print(self.player.units[0].genarium, self.player.units[0].legendarium, self.player.units[0].mythicite, self.player.units[0].rarium)
+        self.spawn.spawn()
         return True
         # <<-- /Creer-Merge: runTurn -->>
 
@@ -184,23 +188,5 @@ class AI(BaseAI):
         """
         return ((start[0] - end[0])**2 + (start[1] - end[1])**2) ** .5
 
-    def moveTo(self, shipX, shipY, tarX, tarY, move):
-        """Returns the x and y speed to get to target x and y.
-
-        This is to take care of the positives and negatives.
-        """
-        x = shipX - tarX
-        if x > move: # greater than one move
-            x = move
-        elif x < (-1 * move):
-            x = -1 * move
-
-        y = shipY - tarY
-        if y > move:
-            y = move
-        elif y < (-1 * move):
-            y = -1 * move
-
-        return x, y
 
     # <<-- /Creer-Merge: functions -->>
