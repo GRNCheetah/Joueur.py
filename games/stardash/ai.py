@@ -172,8 +172,8 @@ class AI(BaseAI):
 
 
         #self.movement.moveMiner(0, "genarium", [])
-        self.movement.move()
         self.action.do_actions()
+        self.movement.move()
         print(self.player.units[0].genarium, self.player.units[0].legendarium, self.player.units[0].mythicite, self.player.units[0].rarium)
         self.spawn.spawn()
         return True

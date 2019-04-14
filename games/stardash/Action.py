@@ -21,7 +21,7 @@ class Action:
             neighbors=[]
             for body in self.game.bodies:
                 if body.body_type=='asteroid':
-                    if (body.x-unit.x)**2+(body.y-unit.y)**2 <= unit.job.range:
+                    if ((body.x-unit.x)**2+(body.y-unit.y)**2)**.5 <= unit.job.range:
                         neighbors.append(body)
             myths=[]
             legends=[]
@@ -29,7 +29,7 @@ class Action:
             genes=[]
             nones=[]
             for neighbor in neighbors:
-                if neighbor.material_type=='mythicite':
+                if neighbor.material_type=='mythicite' and self.game.current_turn < self.game.orbits_protected:
                     myths.append(neighbor)
                 elif neighbor.material_type=='legendarium':
                     legends.append(neighbor)
