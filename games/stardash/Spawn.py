@@ -35,13 +35,13 @@ class Spawn:
         for u in self.player.units:
             if u.job.title == "miner":
                 if u.x < closestMiner[0] and u.y < closestMiner[1]:
-                    closestMiner[0] = self.findCX(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
-                    closestMiner[1] = self.findCY(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
+                    closestMiner[0] = self.findCX(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, self.player.home_base.radius)
+                    closestMiner[1] = self.findCY(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, self.player.home_base.radius)
                     self.amtMiners += 1
             elif u.job.title == "transporter":
                 if u.x < closestTrans[0] and u.y < closestTrans[1]:
-                    closestTrans[0] = self.findCX(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
-                    closestTrans[1] = self.findCY(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, 1)
+                    closestTrans[0] = self.findCX(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, self.player.home_base.radius)
+                    closestTrans[1] = self.findCY(self.player.home_base.x + 1, self.player.home_base.y, u.x, u.y, self.player.home_base.radius)
                     self.amtTrans += 1
             elif u.job.title == "corvette":
                 self.amtCorv += 1
