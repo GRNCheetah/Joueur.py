@@ -158,8 +158,9 @@ class Action:
             self.shootNonShielded(corvette)
             
     def go_to_friend_fighter(self, mar):
-        if ((self.player.home_base.x-mar.x)**2+(self.player.home_base.y-mar.y)**2)**.5 <= mar.job.range:
-            self.find_dash(mar, self.game.size_x/2, 30)
+        if ((self.player.home_base.x-mar.x)**2+(self.player.home_base.y-mar.y)**2)**.5 <= 1400:
+            (x,y)=self.find_move(mar, self.game.size_x/2, 30, mar.moves)
+            mar.move(mar.x+x, mar.y+y)
         else:
             closestFighter=None
             minDistance=99999 #infinity
@@ -168,7 +169,8 @@ class Action:
                     if self.distance(unit.x, unit.y, mar.x, mar.y)<minDistance:
                         closestFighter=unit
                         minDistance=self.distance(unit.x, unit.y, mar.x, mar.y)
-            self.find_dash(mar, unit.x, unit.y)
+            (x,y)=self.find_move(mar, unit.x, unit.y, mar.moves)
+            mar.move(mar.x+x,mar.y+y)
     
     
     def find_dash(self, unit, x, y):
@@ -236,72 +238,39 @@ class Action:
                     # Breaks otherwise, since something probably went wrong.
                     break
                     
-    def find_move(self, unit, x, y):
-        """ This is an EXTREMELY basic pathfinding function to move your ship until it can dash to your target.
-            You REALLY should improve this functionality or make your own new one, since this is VERY basic and inefficient.
-            Like, for real.
-            Args:
-                unit (unit): The unit that will be moving.
-                x (int): The x coordinate of the destination.
-                y (int): The y coordinate of the destination.
+    def find_move(self, unit, x, y, move):
+        """Returns the x and y speed to get to target x and y.
+
+        This is to take care of the positives and negatives.
         """
-        # Gets the sun from the list of bodies.
-        sun = self.game.bodies[2]
+        dist = self.distance(unit.x, unit.y, x, y) + .1
+        max_move = move / (2 ** .5)
 
-        while unit.moves >= 1:
-                # Otherwise tries moving towards the target.
+        x = move * ((x - unit.x)/dist)
+        y = move * ((y - unit.y)/dist)
 
-                # The x and y modifiers for movement.
-                x_mod = 0
-                y_mod = 0
+        if x > max_move:
+            x = max_move
+        elif x < (-1 * max_move):
+            x = -1 * max_move
 
-                if unit.x < x or (y < sun.y and unit.y > sun.y or y > sun.y and unit.y < sun.y) and x > sun.x:
-                    # Move to the right if the destination is to the right or on the other side of the sun on the right side.
-                    x_mod = 1
-                elif unit.x > x or (y < sun.y and unit.y > sun.y or y > sun.y and unit.y < sun.y) and x < sun.x:
-                    # Move to the left if the destination is to the left or on the other side of the sun on the left side.
-                    x_mod = -1
+        if y > max_move:
+            y = max_move
+        elif y < (-1 * max_move):
+            y = -1 * max_move
 
-                if unit.y < y or (x < sun.x and unit.x > sun.x or x > sun.x and unit.x < sun.x) and y > sun.y:
-                    # Move down if the destination is down or on the other side of the sun on the lower side.
-                    y_mod = 1
-                elif unit.y > y or (x < sun.x and unit.x > sun.x or x > sun.x and unit.x < sun.x) and y < sun.y:
-                    # Move up if the destination is up or on the other side of the sun on the upper side.
-                    y_mod = -1
-
-                if x_mod != 0 and y_mod != 0 and not unit.safe(unit.x + x_mod, unit.y + y_mod):
-                    # Special case if we cannot safely move diagonally.
-                    if unit.safe(unit.x + x_mod, unit.y):
-                        # Only move horizontally if it is safe.
-                        y_mod = 0
-                    elif unit.safe(unit.x, unit.y + y_mod):
-                        # Only move vertically if it is safe.
-                        x_mod = 0
-
-                if unit.moves < math.sqrt(2) and x_mod != 0 and y_mod != 0:
-                    # Special case if we only have 1 move left and are trying to move 2.
-                    if unit.safe(unit.x + x_mod, unit.y):
-                        y_mod = 0
-                    elif unit.safe(unit.x, unit.y + y_mod):
-                        x_mod = 0
-                    else:
-                        break
-
-                if (x_mod != 0 or y_mod != 0) and (math.sqrt(math.pow(x_mod, 2) + math.pow(y_mod, 2)) >= unit.moves):
-                    # Tries to move if either of the modifiers is not zero (we are actually moving somewhere).
-                    unit.move(unit.x + x_mod, unit.y + y_mod)
-                else:
-                    # Breaks otherwise, since something probably went wrong.
-                    break
-
+        return x, y
+       
+       
     def distance(self, shipX, shipY, tarX, tarY):
         return ((shipX - tarX)**2 + (shipY - tarY)**2) ** .5
         
     
     
     def moveToNearestEnemy(self, unit):
-        if ((self.player.home_base.x-unit.x)**2+(self.player.home_base.y-unit.y)**2)**.5 <= unit.job.range:
-            self.find_dash(unit, self.game.size_x/2, 30)
+        if ((self.player.home_base.x-unit.x)**2+(self.player.home_base.y-unit.y)**2)**.5 <= 1400:
+            (x,y)=self.find_move(unit, self.game.size_x/2, 30, unit.moves)
+            unit.move(unit.x+x, unit.y+y)
         else:
             minDistance=99999 #infinity
             minEnemy=None
@@ -310,7 +279,8 @@ class Action:
                     minDistance=self.distance(unit.x,unit.y,enemy.x,enemy.y)
                     minEnemy=enemy
             if self.distance(unit.x,unit.y,minEnemy.x,minEnemy.y)>unit.job.range:
-                self.find_dash(unit, enemy.x, enemy.y)
+                (x,y)=self.find_move(unit, enemy.x, enemy.y, unit.moves)
+                unit.move(unit.x+x, unit.y+y)
         
     def do_actions(self):
         for unit in self.player.units:
