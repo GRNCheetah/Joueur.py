@@ -29,7 +29,7 @@ class Spawn:
         #Get the closest of the miners, transporters, and asteroids
         closestMiner = [999999, 9999999]
         closestTrans = [999999, 9999999]
-        closestRock = [self.player.home_base.x + self.player.home_base.radius, self.player.home_base.y]
+        closestRock = [self.player.home_base.x + self.player.home_base.radius if game.bodies[2].x > self.player.home_base.x else self.player.home_base.x - self.player.home_base.radius, self.player.home_base.y]
 
         t1 = time()
         for u in self.player.units:
@@ -130,8 +130,9 @@ class Spawn:
                 self.player.home_base.spawn(closestRock[0], closestRock[1], "missileboat")
                 self.amtMissile += 1
 
+            #add more of each until they all have 4
             cnt = 0
-            while self.amtCorv < 4:
+            while self.amtCorv < 6:
                 if cnt == 0 and self.player.money >= 100:
                     self.player.home_base.spawn(closestRock[0], closestRock[1], "corvette")
                     self.amtCorv += 1
@@ -147,7 +148,8 @@ class Spawn:
                 else:
                     break
 
-            if self.amtCorv >= 4:
+            #add miners with extra cash
+            if self.amtCorv >= 6:
                 while self.player.money >= 150:
                     # print("miners:", closestRock[0], closestRock[1])
                     if not self.player.home_base.spawn(closestRock[0], closestRock[1], "miner"):
