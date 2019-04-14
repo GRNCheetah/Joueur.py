@@ -174,7 +174,11 @@ class AI(BaseAI):
         #self.movement.moveMiner(0, "genarium", [])
         self.action.do_actions()
         self.spawn.spawn()
-        self.movement.move()
+        if self.movement.move():
+            self.action.go_attack()
+            self.action.do_actions()
+
+
         print(self.player.units[0].genarium, self.player.units[0].legendarium, self.player.units[0].mythicite, self.player.units[0].rarium)
         self.game.bodies[2].log("Boomtastic")
         return True

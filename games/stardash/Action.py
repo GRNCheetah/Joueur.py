@@ -1,3 +1,4 @@
+import math
 class Action:
 
     def __init__(self, p, g):
@@ -72,9 +73,9 @@ class Action:
                     break
     
     def shootProjectiles(self, corvette):
-        for missle in self.player.opponent.projectiles:
+        for missile in self.player.opponent.projectiles:
             if ((missile.x-corvette.x)**2+(missile.y-corvette.y)**2)**.5 <= corvette.job.range:
-                corvette.shootdown(missle)
+                corvette.shootdown(missile)
                 break
                     
     def mine_neighbors(self, unit):
@@ -155,7 +156,7 @@ class Action:
             self.shootNonShielded(corvette)
     
     
- def find_dash(self, unit, x, y):
+    def find_dash(self, unit, x, y):
         """ This is an EXTREMELY basic pathfinding function to move your ship until it can dash to your target.
             You REALLY should improve this functionality or make your own new one, since this is VERY basic and inefficient.
             Like, for real.
@@ -220,7 +221,7 @@ class Action:
                     # Breaks otherwise, since something probably went wrong.
                     break
 
-    def _distance(self, shipX, shipY, tarX, tarY):
+    def distance(self, shipX, shipY, tarX, tarY):
         return ((shipX - tarX)**2 + (shipY - tarY)**2) ** .5
         
     
@@ -232,7 +233,7 @@ class Action:
             if self.distance(unit.x,unit.y,enemy.x,enemy.y)<minDistance:
                 minDistance=self.distance(unit.x,unit.y,enemy.x,enemy.y)
                 minEnemy=enemy
-        if self.distance(unit.x,unit.y,enemy.x,enemy.y)>unit.job.range:
+        if self.distance(unit.x,unit.y,minEnemy.x,minEnemy.y)>unit.job.range:
             self.find_dash(unit, enemy.x, enemy.y)
     
     def go_attack(self):
@@ -244,7 +245,7 @@ class Action:
                 lastCorvette=unit.get_group()
             elif unit.job.title=='martyr' and unit.get_group()>lastMar:
                 lastMar=unit.get_group()
-            elif unit.job.title=='missileboat' and unit.get_group()>lastMissle:
+            elif unit.job.title=='missileboat' and unit.get_group()>lastMissile:
                 lastMissile=unit.get_group()
         corvs = [0 for x in range(lastCorvette)]
         mars = [0 for x in range(lastMar)]
@@ -253,26 +254,26 @@ class Action:
             if unit.job.title=='corvette':
                 if unit.get_group()==-1:
                     corvs.append(unit)
-                    lastCorvette++
+                    lastCorvette += 1
                     unit.set_group(lastCorvette)
                 else:
                     corvs[unit.get_group()]=unit
             elif unit.job.title=='martyr':
                 if unit.get_group()==-1:
                     mars.append(unit)
-                    lastMar++
+                    lastMar+=1
                     unit.set_group(lastMar)
                 else:
                     mars[unit.get_group()]=unit
             elif unit.job.title=='missileboat':
                 if unit.get_group()==-1:
                     mis.append(unit)
-                    lastMissle++
-                    unit.set_group(lastMissle)
+                    lastMissile += 1
+                    unit.set_group(lastMissile)
                 else:
                     mis[unit.get_group()]=unit
         numSquads=min(len(corvs),len(mars),len(mis))
-        for i in range(numSquads)
+        for i in range(numSquads):
             if self._distance(corvs[i].x,corvs[i].y, mars[i].x, mars[i].y)<=64:
                 if self._distance(corvs[i].x,corvs[i].y, mis[i].x, mis[i].y)<=64:
                     if self._distance(mars[i].x,mars[i].y, mis[i].x, mis[i].y)<=64:

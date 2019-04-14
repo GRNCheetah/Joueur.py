@@ -14,17 +14,29 @@ class Movement:
 
     def move(self):
 
+        c = 0
+        for s in self.player.units:
+            if s.job.title == "corvette":
+                c += 1  # Indicates which position to go to
+
+        attack = False
+
         for ship in self.player.units:
             if ship.job.title == "miner":
                 self.moveMiner(ship)
             elif ship.job.title == "transport":
                 self.moveTransport(ship)
-            elif ship.job.title == "corvette":
+            elif ship.job.title == "corvette" and c < 6:
                 self.moveCorvette(ship)
-            elif ship.job.title == "missileboat":
+            elif ship.job.title == "missileboat" and c < 6:
                 self.moveMissileBoat(ship)
-            elif ship.job.title == "martyr":
+            elif ship.job.title == "martyr" and c < 6:
                 self.moveMartyr(ship)
+            elif c >= 6:
+                attack = True
+
+        return attack
+
 
 
     def moveTransport(self, ship):
@@ -85,44 +97,39 @@ class Movement:
 
     def moveCorvette(self, ship):
         """Two different """
-        c = 0
+
+        count = 0
         for s in self.player.units:
-            if s.job.title == "corvette":
-                c += 1 # Indicates which position to go to
+            if s.job.title == "corvette" and s != ship:
+                count += 1  # Indicates which position to go to
+        moves = ship.job.moves
 
-        if c < 6:
-            count = 0
-            for s in self.player.units:
-                if s.job.title == "corvette" and s != ship:
-                    count += 1  # Indicates which position to go to
-            moves = ship.job.moves
+        x_help = self.game.size_x/2
+        y_help = self.game.size_y/2 - self.game.bodies[2].radius # The amount of space between sun and top
+        # Top
+        positions = [
+            [None, (x_help, (y_help * .3))],
+            [None, (x_help, (y_help * .6))],
+            [None, (x_help, (y_help * .9))],
+            [None, (x_help, y_help + (y_help * .3))],
+            [None, (x_help, y_help + (y_help * .6))],
+            [None, (x_help, y_help + (y_help * .9))]
+        ]
 
-            x_help = self.game.size_x/2
-            y_help = self.game.size_y/2 - self.game.bodies[2].radius # The amount of space between sun and top
-            # Top
-            positions = [
-                [None, (x_help, (y_help * .3))],
-                [None, (x_help, (y_help * .6))],
-                [None, (x_help, (y_help * .9))],
-                [None, (x_help, y_help + (y_help * .3))],
-                [None, (x_help, y_help + (y_help * .6))],
-                [None, (x_help, y_help + (y_help * .9))]
-            ]
-
-            # Find empty position
-            target = (0,0)
-            for pos in positions:
-                if not pos[0]: # Fill empty slot
-                    pos[0] = ship
-                    target = pos[1]
-                else: # Found location
-                    target = pos[1]
+        # Find empty position
+        target = (0,0)
+        for pos in positions:
+            if not pos[0]: # Fill empty slot
+                pos[0] = ship
+                target = pos[1]
+            else: # Found location
+                target = pos[1]
 
 
 
-            # No send this corvette to the correct position
-            x, y = self._moveTo(ship.x, ship.y, target[0],  target[1], moves)
-            ship.move(ship.x + x, ship.y + y)
+        # No send this corvette to the correct position
+        x, y = self._moveTo(ship.x, ship.y, target[0],  target[1], moves)
+        ship.move(ship.x + x, ship.y + y)
 
 
     def moveMissileBoat(self, ship):
