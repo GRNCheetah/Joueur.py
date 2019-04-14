@@ -120,6 +120,8 @@ class Movement:
 
     def _dashTo(self, unit, x, y):
 
+
+        sun = self.game.bodies[2]
         while unit.moves >= 1:
 
             if unit.safe(x, y) and unit.energy >= math.ceil (
