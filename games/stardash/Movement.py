@@ -43,13 +43,13 @@ class Movement:
                         if dist2planet > maxDist:
                             maxDist = dist2planet
                             maxShip = ships[shipNum]
-
-                    x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
-                    print(x, y)
-                    ship.move(ship.x + x, ship.y + y)
-                    if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, maxShip.x, maxShip.y) >= (moves * .5):
+                    if maxDist >= ship.job.range *.75:
                         x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
-                        ship.dash(ship.x + x, ship.y + y)
+                        print(x, y)
+                        ship.move(ship.x + x, ship.y + y)
+                        if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, maxShip.x, maxShip.y) >= (moves * .5):
+                            x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
+                            ship.dash(ship.x + x, ship.y + y)
             else: # Go home to drop off
                 x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
                 ship.move(ship.x + x, ship.y + y)
@@ -59,6 +59,7 @@ class Movement:
 
     def moveMartyr(self, ship):
         moves = ship.job.moves
+        ship.log("SUCK MY ASS")
 
         if not ship.acted:
             if (self._inv(ship) < ship.job.carry_limit): # Go towards the miners
@@ -109,18 +110,13 @@ class Movement:
             ]
 
             # Find empty position
-            empty = None
-            target = None
+            target = (0,0)
             for pos in positions:
-                if not pos[0]: # Hold an empty
-                    empty = pos
-                elif pos[0] == ship: # Here is the pos
+                if not pos[0]: # Fill empty slot
+                    pos[0] = ship
                     target = pos[1]
-                    break
-            if not target:
-                empty[0] = ship
-                target = empty[1]
-                print(">>", empty[0], positions)
+                else: # Found location
+                    target = pos[1]
 
 
 
@@ -141,6 +137,7 @@ class Movement:
         moves = ship.job.moves
 
         if not ship.acted:
+            ship.log('did not mine')
             if (self._inv(ship) < ship.job.carry_limit):
                 minDist = self._distance(0, 0, self.game.size_x, self.game.size_y)
 

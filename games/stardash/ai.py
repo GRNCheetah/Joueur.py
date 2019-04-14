@@ -176,7 +176,7 @@ class AI(BaseAI):
         self.spawn.spawn()
         self.movement.move()
         print(self.player.units[0].genarium, self.player.units[0].legendarium, self.player.units[0].mythicite, self.player.units[0].rarium)
-
+        self.game.bodies[2].log("Boomtastic")
         return True
         # <<-- /Creer-Merge: runTurn -->>
 
