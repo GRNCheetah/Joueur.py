@@ -159,55 +159,58 @@ class Spawn:
                         self.amtMiners += 1
             print("4corvs or miners:", format(time() - t1, '.10f'))
 
-            """t1 = time()
-            if self.runCnt % 2 == 1: #miners
-                if self.player.money < 150:
-                    return
-
-                breakout = 1 # breaks out of while after a couple iterations of not being decremented
-                while self.player.money >= 150 and breakout < 5:
-                    if self.amtMiners % 5 == 0: #make a transport every 5 miners
-
-                        #print("trans:", closestMiner[0], closestMiner[1])
-                        if not self.player.home_base.spawn(closestMiner[0], closestMiner[1], "transport"):
-                            if not self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "transport"):
-                                breakout += 1
-                        continue
-
-                    #print("miners:", closestRock[0], closestRock[1])
-                    if not self.player.home_base.spawn(closestRock[0], closestRock[1], "miner"):
-                        if not self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "miner"):
-                            breakout += 1
-                            continue
-                    self.amtMiners += 1
-
-                print("alternating:", format(time() - t1, '.10f'))
-            else: #corvettes
-                t1 = time()
-                if self.player.money < 100:
-                    return
-
-                while self.player.money >= 100:
-                    if self.amtCorv % 2 == 0: #spawn corvette up at 45 degrees
-                        xCoord = self.player.home_base.x
-                        yCoord = self.player.home_base.y - self.player.home_base.radius
-
-                        #print("corvette:", xCoord, yCoord)
-                        if not self.player.home_base.spawn(xCoord, yCoord, "corvette"):
-                            self.player.home_base.spawn(xCoord, yCoord, "corvette")
-                    elif self.amtCorv % 2 == 1: #spawn corvette down at 45 degrees (315 degrees)
-                        xCoord = self.player.home_base.x
-                        yCoord = self.player.home_base.y + self.player.home_base.radius
-
-                        #print("corvette:", xCoord, yCoord)
-                        if not self.player.home_base.spawn(xCoord, yCoord, "corvette"):
-                            self.player.home_base.spawn(xCoord, yCoord, "corvette")
-                    else:
-                        break
-                    self.amtCorv += 1
-                print("corvettes:", format(time() - t1, '.10f'))"""
-
         self.runCnt += 1
         print("Spawn:", format(time() - t, '.10f'))
+        """t1 = time()
+                    if self.runCnt % 2 == 1: #miners
+                        if self.player.money < 150:
+                            return
+
+                        breakout = 1 # breaks out of while after a couple iterations of not being decremented
+                        while self.player.money >= 150 and breakout < 5:
+                            if self.amtMiners % 5 == 0: #make a transport every 5 miners
+
+                                #print("trans:", closestMiner[0], closestMiner[1])
+                                if not self.player.home_base.spawn(closestMiner[0], closestMiner[1], "transport"):
+                                    if not self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "transport"):
+                                        breakout += 1
+                                continue
+
+                            #print("miners:", closestRock[0], closestRock[1])
+                            if not self.player.home_base.spawn(closestRock[0], closestRock[1], "miner"):
+                                if not self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "miner"):
+                                    breakout += 1
+                                    continue
+                            self.amtMiners += 1
+
+                        print("alternating:", format(time() - t1, '.10f'))
+                    else: #corvettes
+                        t1 = time()
+                        if self.player.money < 100:
+                            return
+
+                        while self.player.money >= 100:
+                            if self.amtCorv % 2 == 0: #spawn corvette up at 45 degrees
+                                xCoord = self.player.home_base.x
+                                yCoord = self.player.home_base.y - self.player.home_base.radius
+
+                                #print("corvette:", xCoord, yCoord)
+                                if not self.player.home_base.spawn(xCoord, yCoord, "corvette"):
+                                    self.player.home_base.spawn(xCoord, yCoord, "corvette")
+                            elif self.amtCorv % 2 == 1: #spawn corvette down at 45 degrees (315 degrees)
+                                xCoord = self.player.home_base.x
+                                yCoord = self.player.home_base.y + self.player.home_base.radius
+
+                                #print("corvette:", xCoord, yCoord)
+                                if not self.player.home_base.spawn(xCoord, yCoord, "corvette"):
+                                    self.player.home_base.spawn(xCoord, yCoord, "corvette")
+                            else:
+                                break
+                            self.amtCorv += 1
+                        print("corvettes:", format(time() - t1, '.10f'))"""
         return
+
+
+
+
 
