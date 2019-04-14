@@ -4,6 +4,7 @@ from joueur.base_ai import BaseAI
 
 # <<-- Creer-Merge: imports -->> - Code you add between this comment and the end comment will be preserved between Creer re-runs.
 # you can add additional import(s) here
+from games.stardash.test import me
 # <<-- /Creer-Merge: imports -->>
 
 class AI(BaseAI):
@@ -81,7 +82,7 @@ class AI(BaseAI):
         sunY = self.game.bodies[2].y
         #print(self.player.units)
 
-        minerX = self.player.units[0].x
+        '''minerX = self.player.units[0].x
         minerY = self.player.units[0].y
 
         minDist = self.distance((0,0),(self.game.size_x, self.game.size_y))
@@ -161,11 +162,11 @@ class AI(BaseAI):
             if ship.job.title == "transport":
                 pass
             if ship.job.title == "missileboat":
-                pass
+                pass'''
 
 
 
-
+        me()
         return True
         # <<-- /Creer-Merge: runTurn -->>
 
