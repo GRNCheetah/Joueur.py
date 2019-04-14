@@ -4,83 +4,65 @@
 #        pass
 
 
-def moveMiner(ship, game, player, mineral, taken):
-    """Gets passed a ship, the game and the player.
+class Movement:
 
-    Moves a Miner towards the nearest asteroid.
-    """
-    minDist = _distance(0, 0, game.size_x, game.size_y)
-    moves = ship.job.moves
-    asteroids = game.bodies
-    minAst = asteroids[0]
-    for astNum in range(4, len(asteroids)):
-        if (asteroids[astNum].material_type == mineral):
-            dist = _distance(ship.x, ship.y, asteroids[astNum].x, asteroids[astNum].y)
-            if dist < minDist:
-                minDist = dist
-                minAst = asteroids[astNum]
-    currDist = minDist
-    turns = 1 # to get to the asteroid
-    nextX = minAst.next_x(turns)
-    nextY = minAst.next_y(turns)
-    nextDist = _distance((ship.x + moves * turns) if (ship.x - nextX > 0) else (ship.x - moves * turns),
-                         (ship.y + moves * turns) if (ship.y - nextY > 0) else (ship.y - moves * turns),
-                         nextX,
-                         nextY)
-    while nextDist < currDist:
-        currDist = nextDist
-        turns += 1
+    def __init__(self, p, g):
+        self.player = p
+        self.game = g
+
+
+    def moveMiner(self, shipNum, mineral, taken):
+        """Gets passed a ship, the game and the player.
+
+        Moves a Miner towards the nearest asteroid.
+        """
+        minDist = self._distance(0, 0, self.game.size_x, self.game.size_y)
+        moves = self.player.units[shipNum].job.moves
+        asteroids = self.game.bodies
+        minAst = asteroids[0]
+        for astNum in range(4, len(asteroids)):
+            if (asteroids[astNum].material_type == mineral):
+                dist = self._distance(self.player.units[shipNum].x, self.player.units[shipNum].y, asteroids[astNum].x, asteroids[astNum].y)
+                if dist < minDist:
+                    minDist = dist
+                    minAst = asteroids[astNum]
+        currDist = minDist
+        turns = 1 # to get to the asteroid
         nextX = minAst.next_x(turns)
         nextY = minAst.next_y(turns)
-        nextDist = _distance((ship.x + moves * turns) if (ship.x - nextX > 0) else (ship.x - moves * turns),
-                             (ship.y + moves * turns) if (ship.y - nextY > 0) else (ship.y - moves * turns),
+        nextDist = self._distance((self.player.units[shipNum].x + moves * turns) if (self.player.units[shipNum].x - nextX > 0) else (self.player.units[shipNum].x - moves * turns),
+                             (self.player.units[shipNum].y + moves * turns) if (self.player.units[shipNum].y - nextY > 0) else (self.player.units[shipNum].y - moves * turns),
                              nextX,
                              nextY)
+        while nextDist < currDist:
+            currDist = nextDist
+            turns += 1
+            nextX = minAst.next_x(turns)
+            nextY = minAst.next_y(turns)
+            nextDist = self._distance((self.player.units[shipNum].x + moves * turns) if (self.player.units[shipNum].x - nextX > 0) else (self.player.units[shipNum].x - moves * turns),
+                                 (self.player.units[shipNum].y + moves * turns) if (self.player.units[shipNum].y - nextY > 0) else (self.player.units[shipNum].y - moves * turns),
+                                 nextX,
+                                 nextY)
 
-    x, y = _moveTo(ship.x, ship.y, nextX, nextY, moves)
-    print(x, y)
-    ship.move(ship.x + x , ship.y + y)
-
-
-def _moveTo(shipX, shipY, tarX, tarY, move):
-    """Returns the x and y speed to get to target x and y.
-
-    This is to take care of the positives and negatives.
-    """
-
-    x = move * ((tarX - shipX)/_distance)
-
-
-    max_move = int(move / (2**.5)) # in single direction
-
-    x = abs(shipX - tarX)
-    y = abs(shipY - tarY)
-    print(x, y)
+        x, y = self._moveTo(self.player.units[shipNum].x, self.player.units[shipNum].y, nextX, nextY, moves)
+        print(x, y)
+        self.player.units[shipNum].move(self.player.units[shipNum].x + x , self.player.units[shipNum].y + y)
 
 
-    if tarX < shipX: # Target is to the left
-        if (x > max_move):
-            x = -1 * max_move
-        else:
-            x = -1 * x
-    else: # Target is to the right
-        if (x > max_move):
-            x = max_move
+    def _moveTo(self, shipX, shipY, tarX, tarY, move):
+        """Returns the x and y speed to get to target x and y.
 
-    if tarY < shipY: # Target is below
-        if (y > max_move):
-            y = -1 * max_move
-        else:
-            y = -1 * y
-    else:
-        if (y > max_move):
-            y = max_move
+        This is to take care of the positives and negatives.
+        """
+        dist = self._distance(shipX, shipY, tarX, tarY)
+        
+        x = move * ((tarX - shipX)/dist)
+        y = move * ((tarY - shipY)/dist)
 
+        return x, y
 
-    return x, y
-
-def _distance(shipX, shipY, tarX, tarY):
-    return ((shipX - tarX)**2 + (shipY - tarY)**2) ** .5
+    def _distance(self, shipX, shipY, tarX, tarY):
+        return ((shipX - tarX)**2 + (shipY - tarY)**2) ** .5
 
 
 
