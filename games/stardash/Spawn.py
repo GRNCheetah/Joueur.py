@@ -132,11 +132,15 @@ class Spawn:
                         xCoord = self.player.home_base.x + self.player.home_base.radius * cos(45)
                         yCoord = self.player.home_base.y + self.player.home_base.radius * sin(45)
 
+                        print("corvette:", xCoord, yCoord)
+
                         if not self.player.home_base.spawn(xCoord, yCoord, "corvette"):
                             self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "corvette")
                     else:
                         xCoord = self.player.home_base.x + self.player.home_base.radius * cos(315)
                         yCoord = self.player.home_base.y + self.player.home_base.radius * sin(315)
+
+                        print("corvette:", xCoord, yCoord)
 
                         if not self.player.home_base.spawn(xCoord, yCoord, "corvette"):
                             self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "corvette")
