@@ -28,8 +28,8 @@ class Spawn:
                 amtMiners += 1
 
         #save up for miners
-        if self.player.money < 150 and amtMiners < 5:
-            return
+        #if self.player.money < 150 and amtMiners < 5:
+        #    return
 
         #spawn miner if I have the money and the amount of miners is less than 5(at the start)
         # or if i need to add a transport
