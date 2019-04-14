@@ -27,32 +27,58 @@ class Spawn:
             elif u.job.title == "miner":
                 amtMiners += 1
 
+        #save up for miners
+        if self.player.money < 150 and amtMiners < 5:
+            return
+
         #spawn miner if I have the money and the amount of miners is less than 5(at the start)
         # or if i need to add a transport
-        if self.player.money >= 150 and (amtMiners < 5 or amtMiners % 5 != 0):
-            xClosestResource = 0
-            yClosestResource = 0
+        makeMartyr = False
+        if self.player.money >= 150:
 
-            for b in range(4, len(self.game.bodies)):
-                if self.game.bodies[b].x > xClosestResource and self.game.bodies[b].y > yClosestResource:
-                    xClosestResource = self.findCX(self.player.home_base.x, self.player.home_base.y, self.game.bodies[b].x, self.game.bodies[b].y, self.player.home_base.radius)
-                    yClosestResource = self.findCY(self.player.home_base.x, self.player.home_base.y, self.game.bodies[b].x, self.game.bodies[b].y, self.player.home_base.radius)
+            if not makeMartyr and (amtMiners < 5 or amtMiners % 5 != 0):
+                xClosestResource = 9999999
+                yClosestResource = 9999999
 
-            print(self.player.home_base.x, self.player.home_base.y, self.player.home_base.radius)
-            print(xClosestResource, yClosestResource)
+                #spawn closest to the closest asteroid
+                for b in range(4, len(self.game.bodies)):
+                    if self.game.bodies[b].x < xClosestResource and self.game.bodies[b].y < yClosestResource:
+                        xClosestResource = self.findCX(self.player.home_base.x, self.player.home_base.y,
+                                                       self.game.bodies[b].x, self.game.bodies[b].y,
+                                                       self.player.home_base.radius)
+                        yClosestResource = self.findCY(self.player.home_base.x, self.player.home_base.y,
+                                                       self.game.bodies[b].x, self.game.bodies[b].y,
+                                                       self.player.home_base.radius)
 
-            self.player.home_base.spawn(xClosestResource, yClosestResource, "miner")
+                self.player.home_base.spawn(xClosestResource, yClosestResource, "miner")
+            else:
+                #spawn closest to the closest transport
+                makeMartyr = False
+                xClosestTrans = 9999999
+                yClosestTrans = 9999999
+
+                for u in self.player.units:
+                    if u.job.title == "transport":
+                        if u.x < xClosestTrans and u.y < yClosestTrans:
+                            xClosestTrans = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
+                            yClosestTrans = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
+
+                self.player.home_base.spawn(xClosestTrans, yClosestTrans, "martyr")
+
+
         elif self.player.money >= 75:
-            xClosestTrans = 0
-            yClosestTrans = 0
+            #spawn closest to the closest miner
+            makeMartyr = True
+            xClosestMiner = 9999999
+            yClosestMiner = 9999999
 
             for u in self.player.units:
-                if u.job.title == "transport":
-                    if u.x > xClosestTrans and u.y > yClosestTrans:
-                        xClosestTrans = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
-                        yClosestTrans = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
+                if u.job.title == "miner":
+                    if u.x < xClosestMiner and u.y < yClosestMiner:
+                        xClosestMiner = self.findCX(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
+                        yClosestMiner = self.findCY(self.player.home_base.x, self.player.home_base.y, u.x, u.y, 1)
 
-            self.player.home_base.spawn(xClosestTrans, yClosestTrans, "transport")
+            self.player.home_base.spawn(xClosestMiner, yClosestMiner, "transport")
         #else nothing spawns
 
 
