@@ -60,20 +60,15 @@ class Movement:
 
 
     def moveMartyr(self, ship):
-        t = time()
-        moves = ship.job.moves
-
         if not ship.acted:
             # Going to the belt
             if ship.x != self.mine_spot_x and ship.y != self.mine_spot_y:
                 self._dashTo(ship, self.mine_spot_x, self.mine_spot_y)
 
 
-        print("Martyr: ", time()-t)
 
     def moveCorvette(self, ship):
         """Two different """
-        t = time()
 
         count = 0
         for s in self.player.units:
@@ -106,8 +101,6 @@ class Movement:
         x, y = self._moveTo(ship.x, ship.y, target[0],  target[1], moves)
         ship.move(ship.x + x, ship.y + y)
 
-        print("Corvette: ", time() - t)
-
     def moveMissileBoat(self, ship):
         pass
 
@@ -117,8 +110,6 @@ class Movement:
 
         Moves a Miner towards the nearest asteroid.
         """
-        t = time()
-
         if not ship.acted:
             # Hail mary to the Mythicite
             if (self._inv(ship) < ship.job.carry_limit) and self.endgame and ship.energy > (ship.job.energy * .25):
@@ -131,8 +122,6 @@ class Movement:
             # Going home
             elif (self._inv(ship) >= ship.job.carry_limit) and ship.safe(self.home_x, self.home_y): # Go back home
                 self._dashTo(ship, self.home_x, self.home_y)
-
-        print("Miner: ", time() - t)
 
     def _inv(self, ship):
         return ship.genarium + ship.legendarium + ship.mythicite + ship.rarium
