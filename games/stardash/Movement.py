@@ -47,7 +47,7 @@ class Movement:
                 #self.moveMissileBoat(ship)
                 pass
             elif ship.job.title == "martyr" and c < 6:
-                #self.moveMartyr(ship)
+                self.moveMartyr(ship)
                 pass
             elif c >= 6:
                 attack = True
@@ -59,52 +59,15 @@ class Movement:
 
 
 
-    '''def moveTransport(self, ship):
-        moves = ship.job.moves
-        t = time()
-
-        if not ship.acted:
-            if (self._inv(ship) < ship.job.carry_limit): # Go towards the miners
-                maxDist = 0
-
-                # Finds the farthest miner from the home planet
-                ships = self.player.units
-                if len(ships) > 0:
-                    maxShip = ships[0]
-                    for shipNum in range(1, len(ships)):
-                        if ships[shipNum] == "miner":
-                            maxDist = self._distance(ship.x, ship.y, ships[shipNum].x, ships[shipNum].y)
-                    if maxDist >= ship.job.range *.75:
-                        x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
-                        print(x, y)
-                        ship.move(ship.x + x, ship.y + y)
-                        if ship.energy > (ship.job.energy * .8) and self._distance(ship.x, ship.y, maxShip.x, maxShip.y) >= (moves * .5):
-                            x, y = self._moveTo(ship.x, ship.y, maxShip.x, maxShip.y, moves)
-                            ship.dash(ship.x + x, ship.y + y)
-            else: # Go home to drop off
-                x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
-                ship.move(ship.x + x, ship.y + y)
-                if ship.energy > (ship.job.energy * .3) and self._distance(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y) >= (moves * .5):
-                    x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
-                    ship.dash(ship.x + x, ship.y + y)
-        print("Transport: ", time() - t)'''
-
     def moveMartyr(self, ship):
         t = time()
         moves = ship.job.moves
 
         if not ship.acted:
             # Going to the belt
-            if ship.safe(self.mine_spot_x, self.mine_spot_y) and ship.x != self.mine_spot_x and ship.y != self.mine_spot_y:
+            if ship.x != self.mine_spot_x and ship.y != self.mine_spot_y:
+                self._dashTo(ship, self.mine_spot_x, self.mine_spot_y)
 
-                numDashes = math.ceil((self._distance(ship.x, ship.y, self.mine_spot_x,
-                                                      self.mine_spot_y) / self.game.dash_distance) * self.game.dash_cost)
-                if ship.energy >= numDashes:  # Dash
-                    print("dashing")
-                    ship.dash(self.mine_spot_x, self.mine_spot_y)
-                else:  # Something is not right
-                    x, y = self._moveTo(ship.x, ship.y, self.mine_spot_x, self.mine_spot_y, moves)
-                    ship.move(ship.x + x, ship.y + y)
 
         print("Martyr: ", time()-t)
 
@@ -155,45 +118,81 @@ class Movement:
         Moves a Miner towards the nearest asteroid.
         """
         t = time()
-        moves = ship.job.moves
 
         if not ship.acted:
-
-            numDashes = math.ceil((self._distance(ship.x, ship.y, self.mine_spot_x, self.mine_spot_y) / self.game.dash_distance) * self.game.dash_cost)
             # Hail mary to the Mythicite
-            if (self._inv(ship) < ship.job.carry_limit) and self.endgame:
+            if (self._inv(ship) < ship.job.carry_limit) and self.endgame and ship.energy > (ship.job.energy * .25):
                 x = self.game.bodies[3].next_x(2)
                 y = self.game.bodies[3].next_y(2)
-                if (ship.safe(x,y)):
-                    if ship.energy >= numDashes:  # Dash
-                        print("dashing")
-                        ship.dash(x, y)
-                    else:  # Something is not right
-                        x, y = self._moveTo(ship.x, ship.y, x, y, moves)
-                        ship.move(ship.x + x, ship.y + y)
+                self._dashTo(ship, x, y)
             # Going to the belt
-            elif (self._inv(ship) < ship.job.carry_limit) and ship.safe(self.mine_spot_x, self.mine_spot_y):
-                if ship.energy >= numDashes: # Dash
-                    print("dashing")
-                    ship.dash(self.mine_spot_x, self.mine_spot_y)
-                else: # Something is not right
-                    x, y = self._moveTo(ship.x, ship.y, self.mine_spot_x, self.mine_spot_y, moves)
-                    ship.move(ship.x+x, ship.y+y)
+            elif (self._inv(ship) < ship.job.carry_limit and ship.energy > (ship.job.energy * .25)):
+                self._dashTo(ship, self.mine_spot_x, self.mine_spot_y)
             # Going home
             elif (self._inv(ship) >= ship.job.carry_limit) and ship.safe(self.home_x, self.home_y): # Go back home
-                    #x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
-
-                if ship.energy >= numDashes: # Dash
-                    print("dashing")
-                    ship.dash(self.home_x, self.home_y)
-                else: # Something is not right
-                    x, y = self._moveTo(ship.x, ship.y, self.mine_spot_x, self.mine_spot_y, moves)
-                    ship.move(ship.x+x, ship.y+y)
+                self._dashTo(ship, self.home_x, self.home_y)
 
         print("Miner: ", time() - t)
 
     def _inv(self, ship):
         return ship.genarium + ship.legendarium + ship.mythicite + ship.rarium
+
+    def _dashTo(self, unit, x, y):
+
+        while unit.moves >= 1:
+
+            if unit.safe(x, y) and unit.energy >= math.ceil (
+                    (self._distance(unit.x, unit.y, x, y) / self.game.dash_distance) * self.game.dash_cost):
+                # Dashes if it is safe to dash to the point and we have enough energy to dash there.
+                unit.dash(x, y)
+
+                # Breaks out of the loop since we can't do anything else now.
+                break
+            else:
+                # Otherwise tries moving towards the target.
+
+                # The x and y modifiers for movement.
+                x_mod = 0
+                y_mod = 0
+
+                if unit.x < x or (y < sun.y and unit.y > sun.y or y > sun.y and unit.y < sun.y) and x > sun.x:
+                    # Move to the right if the destination is to the right or on the other side of the sun on the right side.
+                    x_mod = 1
+                elif unit.x > x or (y < sun.y and unit.y > sun.y or y > sun.y and unit.y < sun.y) and x < sun.x:
+                    # Move to the left if the destination is to the left or on the other side of the sun on the left side.
+                    x_mod = -1
+
+                if unit.y < y or (x < sun.x and unit.x > sun.x or x > sun.x and unit.x < sun.x) and y > sun.y:
+                    # Move down if the destination is down or on the other side of the sun on the lower side.
+                    y_mod = 1
+                elif unit.y > y or (x < sun.x and unit.x > sun.x or x > sun.x and unit.x < sun.x) and y < sun.y:
+                    # Move up if the destination is up or on the other side of the sun on the upper side.
+                    y_mod = -1
+
+                if x_mod != 0 and y_mod != 0 and not unit.safe(unit.x + x_mod, unit.y + y_mod):
+                    # Special case if we cannot safely move diagonally.
+                    if unit.safe(unit.x + x_mod, unit.y):
+                        # Only move horizontally if it is safe.
+                        y_mod = 0
+                    elif unit.safe(unit.x, unit.y + y_mod):
+                        # Only move vertically if it is safe.
+                        x_mod = 0
+
+                if unit.moves < math.sqrt(2) and x_mod != 0 and y_mod != 0:
+                    # Special case if we only have 1 move left and are trying to move 2.
+                    if unit.safe(unit.x + x_mod, unit.y):
+                        y_mod = 0
+                    elif unit.safe(unit.x, unit.y + y_mod):
+                        x_mod = 0
+                    else:
+                        break
+
+                if (x_mod != 0 or y_mod != 0) and (math.sqrt(math.pow(x_mod, 2) + math.pow(y_mod, 2)) >= unit.moves):
+                    # Tries to move if either of the modifiers is not zero (we are actually moving somewhere).
+                    unit.move(unit.x + x_mod, unit.y + y_mod)
+                else:
+                    # Breaks otherwise, since something probably went wrong.
+                    break
 
     def _moveTo(self, shipX, shipY, tarX, tarY, move):
         """Returns the x and y speed to get to target x and y.
