@@ -99,14 +99,14 @@ class Movement:
             x_help = self.game.size_x/2
             y_help = self.game.size_y/2 - self.game.bodies[2].radius # The amount of space between sun and top
             # Top
-            positions = {
+            positions = [
                 [None, (x_help, (y_help * .3))],
                 [None, (x_help, (y_help * .6))],
                 [None, (x_help, (y_help * .9))],
                 [None, (x_help, y_help + (y_help * .3))],
                 [None, (x_help, y_help + (y_help * .6))],
                 [None, (x_help, y_help + (y_help * .9))]
-            }
+            ]
 
             # Find empty position
             empty = None
