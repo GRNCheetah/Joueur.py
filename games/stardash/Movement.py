@@ -10,16 +10,16 @@ class Movement:
         self.player = p
         self.game = g
 
+        self.taken = [] # The taken asteroids
+
 
     def move(self):
 
         for ship in self.player.units:
             if ship.job.title == "miner":
-                self.moveMiner(ship, "genarium", [])
+                self.moveMiner(ship, "genarium")
 
-
-
-    def moveMiner(self, ship, mineral, taken):
+    def moveMiner(self, ship, mineral):
         """Gets passed a ship, the game and the player.
 
         Moves a Miner towards the nearest asteroid.
@@ -29,6 +29,7 @@ class Movement:
         if (self._inv(ship) < ship.job.carry_limit) :
             minDist = self._distance(0, 0, self.game.size_x, self.game.size_y)
 
+            # Finds the closest asteroid and puts it in minAst
             asteroids = self.game.bodies
             minAst = asteroids[0]
             for astNum in range(4, len(asteroids)):
@@ -37,6 +38,7 @@ class Movement:
                     if dist < minDist:
                         minDist = dist
                         minAst = asteroids[astNum]
+
             '''currDist = minDist
             turns = 1 # to get to the asteroid
             nextX = minAst.next_x(turns)
@@ -53,11 +55,12 @@ class Movement:
                 nextDist = self._distance((ship.x + moves * turns) if (ship.x - nextX > 0) else (ship.x - moves * turns),
                                      (ship.y + moves * turns) if (ship.y - nextY > 0) else (ship.y - moves * turns),
                                      nextX,
-                                     nextY)
-            '''
+                                     nextY)'''
+
             x, y = self._moveTo(ship.x, ship.y, minAst.x, minAst.y, moves)
+            print(turns)
             print(x, y)
-            ship.move(ship.x + x , ship.y + y)
+            ship.move(ship.x + x, ship.y + y)
         else:
             x, y = self._moveTo(ship.x, ship.y, self.player.home_base.x, self.player.home_base.y, moves)
             ship.move(ship.x + x, ship.y + y)
