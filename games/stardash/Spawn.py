@@ -1,4 +1,4 @@
-from time import time
+#from time import time
 
 class Spawn:
     def __init__(self, p, g):
@@ -18,7 +18,7 @@ class Spawn:
         return aY + r * ((bY - aY) / ((bX - aX) ** 2 + (bY - aY) ** 2) ** 0.5)
 
     def spawn(self):
-        t = time()
+        #t = time()
 
         self.amtMiners = 0
         self.amtCorv = 0
@@ -31,7 +31,7 @@ class Spawn:
         closestTrans = [999999, 9999999]
         closestRock = [self.player.home_base.x + self.player.home_base.radius if self.game.bodies[2].x > self.player.home_base.x else self.player.home_base.x - self.player.home_base.radius, self.player.home_base.y]
 
-        t1 = time()
+        #t1 = time()
         for u in self.player.units:
             if u.job.title == "miner":
                 if u.x < closestMiner[0] and u.y < closestMiner[1]:
@@ -50,14 +50,14 @@ class Spawn:
             elif u.job.title == "missileboat":
                 self.amtMissile += 1
 
-        print("init fors:", format(time() - t1, '.10f'))
+        #print("init fors:", format(time() - t1, '.10f'))
         ###############################################
 
         #print("planet:", self.player.home_base.x, self.player.home_base.y, self.player.home_base.radius)
 
         #on first spawn, spawn transporters
         if self.runCnt == 0:
-            t1 = time()
+            #t1 = time()
             if self.player.money < 75:
                 return
 
@@ -69,11 +69,11 @@ class Spawn:
                 self.amtTrans += 1
 
 
-            print("first run:", format(time() - t1, '.10f'))
+            #print("first run:", format(time() - t1, '.10f'))
 
         elif self.runCnt == 1: #spawn another transporter then the rest of the $ is miners
             #return it there isn't enough $ for one
-            t1 = time()
+            #t1 = time()
             if self.player.money < 75:
                 return
 
@@ -96,10 +96,10 @@ class Spawn:
                         self.amtMiners += 1
                 else:
                     self.amtMiners += 1
-            print("2nd run:", format(time() - t1, '.10f'))
+            #print("2nd run:", format(time() - t1, '.10f'))
 
         elif self.runCnt == 2:
-            t1 = time()
+            #t1 = time()
             if self.player.money < 150: #return if there isn't enough $ for one
                 return
 
@@ -110,10 +110,10 @@ class Spawn:
             if not self.player.home_base.spawn(closestTrans[0], closestTrans[1], "martyr"):
                 self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "martyr")
 
-            print("3rd run:", format(time() - t1, '.10f'))
+            #print("3rd run:", format(time() - t1, '.10f'))
 
         elif self.runCnt > 2: #do cool stuff
-            t1 = time()
+            #t1 = time()
             #make all unit counts even
             while self.player.money >= 100 and (self.amtCorv < self.amtShield or self.amtCorv < self.amtMissile):
                 #add more corvs
@@ -157,60 +157,7 @@ class Spawn:
                             self.amtMiners += 1
                     else:
                         self.amtMiners += 1
-            print("4corvs or miners:", format(time() - t1, '.10f'))
+            #print("4corvs or miners:", format(time() - t1, '.10f'))
 
         self.runCnt += 1
-        print("Spawn:", format(time() - t, '.10f'))
-        """t1 = time()
-                    if self.runCnt % 2 == 1: #miners
-                        if self.player.money < 150:
-                            return
-
-                        breakout = 1 # breaks out of while after a couple iterations of not being decremented
-                        while self.player.money >= 150 and breakout < 5:
-                            if self.amtMiners % 5 == 0: #make a transport every 5 miners
-
-                                #print("trans:", closestMiner[0], closestMiner[1])
-                                if not self.player.home_base.spawn(closestMiner[0], closestMiner[1], "transport"):
-                                    if not self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "transport"):
-                                        breakout += 1
-                                continue
-
-                            #print("miners:", closestRock[0], closestRock[1])
-                            if not self.player.home_base.spawn(closestRock[0], closestRock[1], "miner"):
-                                if not self.player.home_base.spawn(self.player.home_base.x, self.player.home_base.y, "miner"):
-                                    breakout += 1
-                                    continue
-                            self.amtMiners += 1
-
-                        print("alternating:", format(time() - t1, '.10f'))
-                    else: #corvettes
-                        t1 = time()
-                        if self.player.money < 100:
-                            return
-
-                        while self.player.money >= 100:
-                            if self.amtCorv % 2 == 0: #spawn corvette up at 45 degrees
-                                xCoord = self.player.home_base.x
-                                yCoord = self.player.home_base.y - self.player.home_base.radius
-
-                                #print("corvette:", xCoord, yCoord)
-                                if not self.player.home_base.spawn(xCoord, yCoord, "corvette"):
-                                    self.player.home_base.spawn(xCoord, yCoord, "corvette")
-                            elif self.amtCorv % 2 == 1: #spawn corvette down at 45 degrees (315 degrees)
-                                xCoord = self.player.home_base.x
-                                yCoord = self.player.home_base.y + self.player.home_base.radius
-
-                                #print("corvette:", xCoord, yCoord)
-                                if not self.player.home_base.spawn(xCoord, yCoord, "corvette"):
-                                    self.player.home_base.spawn(xCoord, yCoord, "corvette")
-                            else:
-                                break
-                            self.amtCorv += 1
-                        print("corvettes:", format(time() - t1, '.10f'))"""
         return
-
-
-
-
-
