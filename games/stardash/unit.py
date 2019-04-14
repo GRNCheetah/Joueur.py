@@ -37,20 +37,20 @@ class Unit(GameObject):
         self._shield = 0
         self._x = 0
         self._y = 0
-        self.group=-1
-        self.assembled=False
+        self.myxtarget=-1
+        self.myytarget=-1
     
-    def set_assembled(self, assembled):
-        self.assembled=assembled
+    def set_myxtarget(self, x):
+        self.myxtarget=x
     
-    def get_assembled(self):
-        return self.assembled
+    def get_myxtarget(self):
+        return self.myxtarget
         
-    def set_group(self, group):
-        self.group=group
+    def set_myytarget(self, y):
+        self.myytarget=y
         
-    def get_group(self):
-        return self.group
+    def get_myytarget(self):
+        return self.myytarget
 
     @property
     def acted(self):

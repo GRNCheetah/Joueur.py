@@ -1,4 +1,6 @@
 import math
+from random import randint
+
 class Action:
 
     def __init__(self, p, g):
@@ -158,8 +160,17 @@ class Action:
             self.shootNonShielded(corvette)
             
     def go_to_friend_fighter(self, mar):
+        if mar.myytarget==-1:
+            myrand=randint(0,1)
+            if myrand==0:
+                mar.myytarget=30
+                mar.myxtarget=self.game.size_x/2
+            else:
+                mar.myytarget=self.game.size_y-30
+                mar.myxtarget=self.game.size_x/2
+                
         if ((self.player.home_base.x-mar.x)**2+(self.player.home_base.y-mar.y)**2)**.5 <= 1400:
-            (x,y)=self.find_move(mar, self.game.size_x/2, 30, mar.moves)
+            (x,y)=self.find_move(mar, mar.myxtarget, mar.myytarget, mar.moves)
             mar.move(mar.x+x, mar.y+y)
         else:
             closestFighter=None
@@ -266,10 +277,18 @@ class Action:
         return ((shipX - tarX)**2 + (shipY - tarY)**2) ** .5
         
     
-    
     def moveToNearestEnemy(self, unit):
+        if unit.myytarget==-1:
+            myrand=randint(0,1)
+            if myrand==0:
+                unit.myytarget=30
+                unit.myxtarget=self.game.size_x/2
+            else:
+                unit.myytarget=self.game.size_y-30
+                unit.myxtarget=self.game.size_x/2
+                
         if ((self.player.home_base.x-unit.x)**2+(self.player.home_base.y-unit.y)**2)**.5 <= 1400:
-            (x,y)=self.find_move(unit, self.game.size_x/2, 30, unit.moves)
+            (x,y)=self.find_move(unit, unit.myxtarget, unit.myytarget, unit.moves)
             unit.move(unit.x+x, unit.y+y)
         else:
             minDistance=99999 #infinity
